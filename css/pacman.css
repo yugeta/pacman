@@ -1,8 +1,14 @@
 .pacman{
   position:absolute;
+  z-index:10;
   display:inline-block;
   width:var(--size-chara);
   height:var(--size-chara);
+}
+
+.pacman[data-status='crashed']::before,
+.pacman[data-status='crashed']::after{
+  animation-play-state: paused;
 }
 
 .pacman::before,
@@ -12,7 +18,7 @@
   width:100%;
   height:50%;
   background-color:yellow;
-  animation-duration:0.4s;
+  animation-duration:var(--anim-speed);
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
@@ -20,12 +26,16 @@
   transform-origin:center bottom;
   border-radius:var(--size-chara) var(--size-chara) 0 0;
   transform:rotate(45deg);
-  animation-name : pacman_before;
 }
 .pacman::after{
   transform-origin:center top;
   border-radius:0 0 var(--size-chara) var(--size-chara);
   transform:rotate(-45deg);
+}
+.pacman[data-anim="true"]::before{
+  animation-name : pacman_before;
+}
+.pacman[data-anim="true"]::after{
   animation-name : pacman_after;
 }
 
@@ -64,4 +74,100 @@
 }
 .pacman[data-direction="down"]{
   transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2)) rotate(-90deg);
+}
+
+.pacman[data-status="dead"]::before,
+.pacman[data-status="dead"]::after{
+  transform:rotate(0deg);
+  animation-delay : 0.0s;
+  animation-direction : normal;
+  animation-duration : 2.0s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+}
+.pacman[data-status="dead"]::before{
+  animation-name : pacman-dead-before;
+}
+.pacman[data-status="dead"]::after{
+  animation-name : pacman-dead-after;
+}
+
+@keyframes pacman-dead-before{
+  0%{
+    clip-path: polygon(
+       50% 100%, 
+        0% 100%, 
+        0% 0%,
+      100% 0%,
+      100% 100%
+    );
+  }
+  25%{
+    clip-path: polygon(
+      50% 100%, 
+      0% 0%, 
+      0% 0%, 
+      100% 0%,
+      100% 100%
+    );
+  }
+  75%{
+    clip-path: polygon(
+       50% 100%, 
+      100% 0%, 
+      100% 0%,
+      100% 0%,
+      100% 100%
+    );
+  }
+  
+  100%{
+    clip-path: polygon(
+      50% 100%, 
+      100% 100%, 
+      100% 100%, 
+      100% 100%, 
+      100% 100% 
+    );
+  }
+}
+@keyframes pacman-dead-after{
+  0%{
+    clip-path: polygon(
+       50% 0%, 
+        0% 0%, 
+        0% 100%,
+      100% 100%,
+      100% 0%
+    );
+  }
+  25%{
+    clip-path: polygon(
+      50% 0%, 
+      0% 100%, 
+      0% 100%, 
+      100% 100%,
+      100% 0%
+    );
+  }
+  75%{
+    clip-path: polygon(
+       50% 0%, 
+      100% 100%, 
+      100% 100%,
+      100% 100%,
+      100% 0%
+    );
+  }
+  
+  100%{
+    clip-path: polygon(
+      50% 0%, 
+      100% 0%, 
+      100% 0%, 
+      100% 0%, 
+      100% 0% 
+    );
+  }
 }

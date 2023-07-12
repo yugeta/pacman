@@ -1,5 +1,6 @@
 import { Main }   from './main.js'
 import { Frame }  from './frame.js'
+import { Pacman } from './pacman.js'
 
 export class Ghost{
   constructor(){
@@ -7,23 +8,19 @@ export class Ghost{
   }
 
   static datas = [
-    {
-      id : 1,
+    { id : 1,
       direction : null,
       coodinate : { x : 12, y : 11 },
     },
-    {
-      id : 2,
+    { id : 2,
       direction : null,
       coodinate : { x : 15, y : 11 },
     },
-    {
-      id : 3,
+    { id : 3,
       direction : null,
       coodinate : { x : 12, y : 14 },
     },
-    {
-      id : 4,
+    { id : 4,
       direction : null,
       coodinate : { x : 15, y : 14 },
     },
@@ -104,6 +101,9 @@ export class Ghost{
     if(!elm_ghost || !next_pos){return}
     const data = Ghost.get_data(elm_ghost)
     if(!data){return}
+    if(Main.is_dead){
+      return
+    }
 
     //warp
     if(Frame.is_warp(next_pos)){
@@ -120,6 +120,11 @@ export class Ghost{
       x : next_pos.x * Frame.block_size,
       y : next_pos.y * Frame.block_size,
     }
+    if(Pacman.is_collision(next_pos)){
+      Ghost.crashed()
+      Pacman.crashed(elm_ghost)
+    }
+    data.next_pos = next_pos
 
     elm_ghost.animate(
       [
@@ -137,16 +142,22 @@ export class Ghost{
       }
     )
     Promise.all(elm_ghost.getAnimations().map(e => e.finished))
-    .then(this.moved.bind(this , elm_ghost , next_pos))
+    .then(this.moved.bind(this , elm_ghost))
   }
-  moved(elm_ghost , pos){
-    elm_ghost.style.setProperty('left'  , `${pos.x * Frame.block_size}px` , '')
-    elm_ghost.style.setProperty('top'   , `${pos.y * Frame.block_size}px` , '')
-
+  moved(elm_ghost){
     const data = Ghost.get_data(elm_ghost)
-    data.coodinate = pos
-
-    if(elm_ghost.hasAttribute('data-reverse')){
+    
+    elm_ghost.style.setProperty('left'  , `${data.next_pos.x * Frame.block_size}px` , '')
+    elm_ghost.style.setProperty('top' , `${data.next_pos.y * Frame.block_size}px` , '')
+    
+    data.coodinate = data.next_pos
+    
+    if(Main.is_dead){return}
+    if(Pacman.is_collision(data.coodinate)){
+      Ghost.crashed()
+      Pacman.crashed(elm_ghost)
+    }
+    else if(elm_ghost.hasAttribute('data-reverse')){
       elm_ghost.removeAttribute('data-reverse')
       this.reverse_move(elm_ghost , data)
     }
@@ -247,10 +258,31 @@ export class Ghost{
   static power_on(){
     for(const elm of Ghost.elm_ghosts){
       elm.setAttribute('data-reverse' , '1')
+      elm.setAttribute('data-status' , 'weak')
     }
   }
   static power_off(){
-
+    for(const elm of Ghost.elm_ghosts){
+      if(elm.getAttribute('data-status') === 'weak'){continue}
+      elm.removeAttribute('data-status')
+    }
   }
 
+  static crashed(){
+    Main.is_crash = true
+    for(const elm of Ghost.elm_ghosts){
+      Main.is_dead = true
+      const svg = elm.querySelector('.under svg')
+      svg.pauseAnimations()
+      const anim = elm.getAnimations()
+      if(!anim || !anim.length){continue}
+      anim[0].pause()
+    }
+  }
+
+  static hidden_all(){
+    for(const elm of Ghost.elm_ghosts){
+      elm.style.setProperty('display' , 'none' , '');
+    }
+  }
 }

@@ -10,7 +10,7 @@ Author : Yugeta.Koji
 
 
 # Session
-- パワーエサを食べて、敵キャラをweakモードに切り替えます。
+- 敵とぶつかッタ時の判定を追加します。
 
 # Blog
-- [Javascript: パックマンをHTMLで作ってみるブログ#11 パワーエサモード](https://blog.myntinc.com/2023/07/javascript-html11.html)
+- [Javascript: パックマンをHTMLで作ってみるブログ#12 敵とぶつかる処理](https://blog.myntinc.com/2023/07/javascript-html12.html)

@@ -16,7 +16,6 @@
 .ghost[data-color='3']{--color-body : lightblue;}
 .ghost[data-color='4']{--color-body : pink;}
 .ghost[data-status='weak']{--color-body : blue;}
-.frame-area[data-power='1'] .ghost{--color-body : blue;}
 
 .ghost > *{
   margin : 0 auto;
@@ -73,7 +72,7 @@
 .ghost > .head[data-direction='down'] .eyes{
   bottom:-20%;
 }
-.frame-area[data-power='1'] .ghost > .head .eyes{
+.ghost[data-status='weak'] > .head .eyes{
   left:0;
   bottom:20%;
 }
@@ -94,21 +93,21 @@
   margin-top    : 50%;
   margin-bottom : 0;
 }
-.frame-area[data-power='1'] .ghost > .head .eyes *::before{
+.ghost[data-status='weak'] > .head .eyes *::before{
   display:none;
 }
 
-.frame-area[data-power='1'] .ghost > .head .eyes .eye-left,
-.frame-area[data-power='1'] .ghost > .head .eyes .eye-right{
+.ghost[data-status='weak'] > .head .eyes .eye-left,
+.ghost[data-status='weak'] > .head .eyes .eye-right{
   width  : calc(var(--size-eye) / 2);
   height : calc(var(--size-eye) / 2);
   background-color:white;
   border-radius:50%;
 }
-.frame-area[data-power='1'] .ghost > .head .eyes .eye-left{
+.ghost[data-status='weak'] > .head .eyes .eye-left{
   left:25%;
 }
-.frame-area[data-power='1'] .ghost > .head .eyes .eye-right{
+.ghost[data-status='weak'] > .head .eyes .eye-right{
   right:25%;
 }
 
@@ -121,7 +120,7 @@
 .frame-area .ghost > .mouse > svg{
   display:none;
 }
-.frame-area[data-power='1'] .ghost > .mouse > svg{
+.ghost[data-status='weak'] > .mouse > svg{
   position:absolute;
   top:-60%;
   display:block;

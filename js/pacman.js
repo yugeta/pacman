@@ -2,6 +2,7 @@ import { Main }     from './main.js'
 import { Frame }    from './frame.js'
 import { Control }  from './control.js'
 import { Feed }     from './feed.js'
+import { Ghost }    from './ghost.js'
 
 export class Pacman{
   // 初期表示座標処理
@@ -37,13 +38,14 @@ export class Pacman{
   }
 
   static moving(){
-    let next_pos = Pacman.next_pos(Pacman.direction , Pacman.coodinates)
+    if(Main.is_dead){return}
+    Pacman.next_pos = Frame.next_pos(Pacman.direction , Pacman.coodinates)
     //warp
-    if(Frame.is_warp(next_pos)){
-      Pacman.coodinates = Frame.get_another_warp_pos(next_pos)
-      next_pos = Pacman.next_pos(Pacman.direction , Pacman.coodinates)
+    if(Frame.is_warp(Pacman.next_pos)){
+      Pacman.coodinates = Frame.get_another_warp_pos(Pacman.next_pos)
+      Pacman.next_pos = Pacman.next_pos(Pacman.direction , Pacman.coodinates)
     }
-    if(Frame.is_collision(next_pos)){
+    if(Frame.is_collision(Pacman.next_pos)){
       this.elm.setAttribute('data-anim' , "")
       delete Pacman.direction
       return
@@ -56,8 +58,8 @@ export class Pacman{
           top  : `${Pacman.coodinates.y * Frame.block_size}px`,
         },
         {
-          left : `${next_pos.x * Frame.block_size}px`,
-          top  : `${next_pos.y * Frame.block_size}px`,
+          left : `${Pacman.next_pos.x * Frame.block_size}px`,
+          top  : `${Pacman.next_pos.y * Frame.block_size}px`,
         }
       ],
       {
@@ -65,17 +67,17 @@ export class Pacman{
       }
     )
     Promise.all(this.elm.getAnimations().map(e => e.finished)).then(()=>{
-      Pacman.moved(next_pos)
+      Pacman.moved()
     })
   }
 
-  static moved(next_pos){
-    Pacman.coodinates = next_pos
+  static moved(){
+    Pacman.coodinates = Pacman.next_pos
     Frame.put(this.elm, Pacman.coodinates)
     Feed.move_map()
     
     if(Control.direction && Control.direction !== Pacman.direction){
-      const temp_pos = Pacman.next_pos(Control.direction , Pacman.coodinates)
+      const temp_pos = Frame.next_pos(Control.direction , Pacman.coodinates)
       if(!Frame.is_collision(temp_pos)){
         Pacman.direction = Control.direction
       }
@@ -83,7 +85,30 @@ export class Pacman{
     Pacman.moving()
   }
 
-  static next_pos(direction){
-    return Frame.next_pos(direction , Pacman.coodinates)
+  static is_collision(pos){
+    if(!pos || !Pacman.coodinates || !Pacman.next_pos){return}
+    if(pos.x === Pacman.coodinates.x && pos.y === Pacman.coodinates.y){
+      return true
+    }
+    else if(pos.x === Pacman.next_pos.x && pos.y === Pacman.next_pos.y){
+      return true
+    }
+    else{
+      return false
+    }
+  }
+
+  static crashed(){
+    setTimeout(Pacman.dead , 1000)
+    const anim = Pacman.elm.getAnimations()
+    if(anim && anim.length){
+      anim[0].pause()
+    }
+  }
+
+  static dead(){
+    Ghost.hidden_all()
+    Pacman.elm.setAttribute('data-direction' , 'up')
+    Pacman.elm.setAttribute('data-status' , 'dead')
   }
 }
