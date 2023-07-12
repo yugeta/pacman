@@ -10,8 +10,8 @@ Author : Yugeta.Koji
 
 
 # Session
-- 前回作った敵キャラを４体並べてみたいと思います。
+- キャラクターができたので、今回はステージのパーツを作ってみたいと思います。
 
 
 # Blog
-- [css + svg: パックマンのキャラアニメーション#3](https://blog.myntinc.com/2023/04/css-svg-3.html)
+- [css + svg: パックマンをHTMLで作ってみるブログ#4 壁の作成](https://blog.myntinc.com/2023/04/css-svg-4.html)
