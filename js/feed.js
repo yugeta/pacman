@@ -3,9 +3,7 @@ import { Pacman }    from './pacman.js'
 import { Ghost }     from './ghost.js'
 
 export class Feed{
-
   constructor(){
-    // Feed.number_of_bites = this.elm_number_of_bites
     Feed.reset_data()
   }
 
@@ -65,9 +63,11 @@ export class Feed{
       clearTimeout(Feed.flg_off)
     }
   }
+  
   static power_soon(){
     Frame.root.setAttribute('data-power' , '2')
   }
+
   static power_off(){
     Frame.root.setAttribute('data-power' , '0')
     Ghost.power_off()

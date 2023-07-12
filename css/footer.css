@@ -1,0 +1,10 @@
+.frame-footer .life-count{
+  --size-life : 32px;
+}
+.frame-footer .life-count .pacman{
+  position:static;
+  width:var(--size-life);
+  height:var(--size-life);
+  margin:10px 5px;
+  display:inline-block;
+}

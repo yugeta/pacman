@@ -1,6 +1,7 @@
 @import 'frame.css';
 @import 'pacman.css';
 @import 'ghost.css';
+@import 'footer.css';
 
 :root{
   --block  : 16px;

@@ -1,8 +1,8 @@
-import { Ghost }   from './ghost.js'
+import { Asset }   from './asset.js'
 import { Frame }   from './frame.js'
 import { Control } from './control.js'
-import { Pacman }  from './pacman.js'
 import { Feed }    from './feed.js'
+import { Footer }  from './footer.js'
 
 export const Main = {
   anim_speed         : 200,
@@ -12,12 +12,34 @@ export const Main = {
   is_crash           : false,
   is_dead            : false,
   is_clear           : false,
+  life_count         : 3,
 }
 
 function init(){
-  new Frame().then(()=>{
-    new Ghost()
-    new Pacman()
+  new Asset({
+    files:[
+      {
+        file   : 'assets/frame.json',
+        target : 'frame',
+        name   : 'asset_json',
+        type   : 'data',
+      },
+      {
+        file   : 'assets/ghost.json',
+        target : 'ghost',
+        name   : 'data_json',
+        type   : 'data',
+      },
+      {
+        file   : 'assets/ghost.html',
+        target : 'ghost',
+        name   : 'asset',
+        type   : 'html',
+      }
+    ]
+  }).then(()=>{
+    new Footer()
+    new Frame()
     new Control()
     new Feed()
   })
@@ -30,5 +52,4 @@ switch(document.readyState){
     break
   default:
     window.addEventListener('DOMContentLoaded' , (()=>init()))
-
 }

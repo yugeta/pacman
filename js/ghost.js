@@ -3,14 +3,6 @@ import { Frame }  from './frame.js'
 import { Pacman } from './pacman.js'
 
 export class Ghost{
-  constructor(){
-    this.load_data()
-  }
-
-  static reset_data(){
-    Ghost.datas = JSON.parse(Ghost.data_json)
-    Ghost.put_element()
-  }
 
   static get elm_ghosts(){
     return document.querySelectorAll('.ghost')
@@ -30,50 +22,26 @@ export class Ghost{
     return data.coodinate
   }
 
-  load_data(){
-    const xhr = new XMLHttpRequest()
-    xhr.open('get' , `assets/ghost.json` , true)
-    xhr.setRequestHeader('Content-Type', 'text/json');
-    xhr.onreadystatechange = ((e) => {
-      if(xhr.readyState !== XMLHttpRequest.DONE){return}
-      if(xhr.status === 404){return}
-      if (xhr.status === 200) {
-        Ghost.data_json = e.target.response
-        Ghost.datas = JSON.parse(Ghost.data_json)
-        Ghost.put_element()
-      }
-    })
-    xhr.send()
+  static init(){
+    Ghost.create_element()
+    Ghost.set_ghost_asset()
   }
 
-  static put_element(){
+  static start(){
+    Ghost.set_move()
+  }
+
+  static create_element(){
+    Ghost.datas = JSON.parse(Ghost.data_json)
     for(const data of Ghost.datas){
       const elm = document.createElement('div')
       elm.className = 'ghost'
       elm.setAttribute('data-color' , data.id)
       Frame.root.appendChild(elm)
     }
-    Ghost.load_asset()
   }
 
-  static load_asset(){
-    const xhr = new XMLHttpRequest()
-    xhr.open('get' , `assets/ghost.html` , true)
-    xhr.setRequestHeader('Content-Type', 'text/html');
-    xhr.onreadystatechange = ((e) => {
-      if(xhr.readyState !== XMLHttpRequest.DONE){return}
-      if(xhr.status === 404){return}
-      if (xhr.status === 200) {
-        Ghost.asset = e.target.response
-        Ghost.set_ghost()
-        Ghost.set_move()
-        // setTimeout(this.set_move.bind(this) , 300)
-      }
-    })
-    xhr.send()
-  }
-
-  static set_ghost(){
+  static set_ghost_asset(){
     const elm_ghosts = Ghost.elm_ghosts
     for(const elm_ghost of elm_ghosts){
       const coodinate = Ghost.get_coodinate(elm_ghost)
@@ -100,6 +68,7 @@ export class Ghost{
     Ghost.set_direction(elm_ghost , direction)
     Ghost.moving(elm_ghost , next_pos)
   }
+
   static moving(elm_ghost , next_pos){
     if(!elm_ghost || !next_pos){return}
     const data = Ghost.get_data(elm_ghost)
@@ -109,33 +78,16 @@ export class Ghost{
     }
 
     //warp
-    if(Frame.is_warp(next_pos)){
-      data.coodinate = Frame.get_another_warp_pos(next_pos)
-      next_pos = Frame.next_pos(data.direction , data.coodinate)
-    }
+    next_pos = Ghost.warp(data , next_pos)
     if(!next_pos){return}
 
-    const before_pos = {
-      x : data.coodinate.x * Frame.block_size,
-      y : data.coodinate.y * Frame.block_size,
-    }
-    const after_pos = {
-      x : next_pos.x * Frame.block_size,
-      y : next_pos.y * Frame.block_size,
-    }
+    const before_pos = Ghost.get_pos(data.coodinate)
+    const after_pos  = Ghost.get_pos(next_pos)
+
     if(Pacman.is_collision(next_pos)){
-      switch(elm_ghost.getAttribute('data-status')){
-        case 'weak':
-          Ghost.dead(elm_ghost)
-          break
-        case 'dead':
-          break
-        default:
-          Ghost.crashed(elm_ghost)
-          Pacman.crashed(elm_ghost)
-          return
-      }
+      Ghost.hit(elm_ghost)
     }
+
     data.next_pos = next_pos
     const id = 'ghost_anim'
     elm_ghost.animate(
@@ -155,31 +107,22 @@ export class Ghost{
       }
     )
 
-    Promise.all([elm_ghost.getAnimations().find(e => e.id === id).finished])
+    Promise.all([elm_ghost.getAnimations().find(e => e.id === id) && elm_ghost.getAnimations().find(e => e.id === id).finished])
     .then(Ghost.moved.bind(this , elm_ghost))
   }
+
   static moved(elm_ghost , e){
     if(!elm_ghost){return}
+
     const data = Ghost.get_data(elm_ghost)
     
-    elm_ghost.style.setProperty('left' , `${data.next_pos.x * Frame.block_size}px` , '')
-    elm_ghost.style.setProperty('top'  , `${data.next_pos.y * Frame.block_size}px` , '')
+    Ghost.set_pos(elm_ghost , Ghost.get_pos(data.next_pos))
     
     data.coodinate = data.next_pos
     
     if(Main.is_dead){return}
     if(Pacman.is_collision(data.coodinate)){
-      switch(elm_ghost.getAttribute('data-status')){
-        case 'weak':
-          Ghost.dead(elm_ghost)
-          break
-        case 'dead':
-          break
-        default:
-          Ghost.crashed(elm_ghost)
-          Pacman.crashed(elm_ghost)
-          return
-      }
+      Ghost.hit(elm_ghost)
     }
 
     // dead -> alive
@@ -198,6 +141,39 @@ export class Ghost{
       Ghost.next_move(elm_ghost , data)
     }
   }
+
+  static warp(data, next_pos){
+    if(!Frame.is_warp(next_pos)){return next_pos}
+    data.coodinate = Frame.get_another_warp_pos(next_pos)
+    return Frame.next_pos(data.direction , data.coodinate)
+  }
+
+  static hit(elm_ghost){
+    switch(elm_ghost.getAttribute('data-status')){
+      case 'weak':
+        Ghost.dead(elm_ghost)
+        break
+      case 'dead':
+        break
+      default:
+        Pacman.crashed(elm_ghost)
+        Ghost.crashed(elm_ghost)
+        return
+    }
+  }
+
+  static get_pos(pos){
+    return {
+      x : pos.x * Frame.block_size,
+      y : pos.y * Frame.block_size,
+    }
+  }
+
+  static set_pos(elm_ghost , pos){
+    elm_ghost.style.setProperty('left' , `${pos.x}px` , '')
+    elm_ghost.style.setProperty('top'  , `${pos.y}px` , '')
+  }
+
   static reverse_move(elm_ghost , data){
     const direction = Ghost.reverse_direction(data.direction)
     Ghost.set_direction(elm_ghost , direction)
@@ -205,6 +181,7 @@ export class Ghost{
     const next_pos = Frame.next_pos(data.direction , data.coodinate)
     Ghost.moving(elm_ghost , next_pos)
   }
+
   static next_move(elm_ghost , data){
     const directions = Ghost.get_enable_directions(data.coodinate , data.direction , Ghost.get_status(elm_ghost))
     const direction  = Ghost.get_direction(elm_ghost, directions)
@@ -334,6 +311,7 @@ export class Ghost{
       elm.setAttribute('data-status' , 'weak')
     }
   }
+
   static power_off(){
     for(const elm of Ghost.elm_ghosts){
       if(elm.getAttribute('data-status') === 'weak'){
@@ -345,7 +323,8 @@ export class Ghost{
   static crashed(elm_ghost){
     Main.is_crash = true
     Main.is_dead = true
-    Ghost.move_stop(elm_ghost)
+    Ghost.move_stops()
+    Frame.crashed()
   }
 
   static move_stops(){
@@ -365,6 +344,12 @@ export class Ghost{
   static hidden_all(){
     for(const elm of Ghost.elm_ghosts){
       elm.style.setProperty('display' , 'none' , '');
+    }
+  }
+
+  static remove_all(){
+    for(const elm of Ghost.elm_ghosts){
+      elm.parentNode.removeChild(elm)
     }
   }
 

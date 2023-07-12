@@ -3,21 +3,16 @@ import { Pacman }  from './pacman.js'
 import { Ghost }   from './ghost.js'
 import { Feed }    from './feed.js'
 import { Control } from './control.js'
+import { Footer }  from './footer.js'
 
 export class Frame{
   constructor(){
-    return new Promise(resolve => {
-      this.resolve = resolve
-      Frame.stage_datas = this.stage_datas = []
-      this.load_asset()
-    })
-  }
-  static get root(){
-    return document.querySelector(`.frame-area`)
+    Frame.create()
+    Frame.start()
   }
 
-  get block_size(){
-    return Frame.block_size
+  static get root(){
+    return document.querySelector(`.frame-area`)
   }
 
   static get block_size(){
@@ -27,6 +22,10 @@ export class Frame{
 
   static get cols_count(){
     return ~~(Frame.root.offsetWidth / Frame.block_size)
+  }
+
+  static get is_ready(){
+    return Frame.root.getAttribute('data-status') === 'ready' ? true : false
   }
 
   static get_elm(num){
@@ -48,28 +47,48 @@ export class Frame{
     return Frame.root.getAttribute('data-status') === 'clear' ? true : false
   }
 
-  load_asset(){
-    const xhr = new XMLHttpRequest()
-    xhr.open('get' , `assets/frame.json` , true)
-    xhr.setRequestHeader('Content-Type', 'text/html');
-    xhr.onreadystatechange = ((e) => {
-      if(xhr.readyState !== XMLHttpRequest.DONE){return}
-      if(xhr.status === 404){return}
-      if (xhr.status === 200) {
-        // Frame.frame_datas = this.frame_datas = JSON.parse(e.target.response)
-        // this.view()
-        // this.set_collision()
-        // this.finish()
-        // this.set_ghost_start_area()
-        Frame.asset_json  = e.target.response
-        Frame.start()
-        this.finish()
-      }
-    }).bind(this)
-    xhr.send()
+  static get is_game_over(){
+    return Footer.life_count <= 0 ? true : false
   }
 
   static start(){
+    if(!Frame.is_game_over){
+      Frame.root.setAttribute('data-status' , 'ready')
+      Ghost.init()
+      Pacman.init()
+      Frame.message_on(`READY!`)
+      setTimeout((()=>{
+        Frame.root.setAttribute('data-status' , '')
+        Frame.message_off()
+        Ghost.start()
+        Pacman.start()
+      }),2000)
+    }
+    else{
+      Frame.game_over()
+    }
+  }
+
+  static game_over(){
+    Frame.message_on(`GAME OVER`)
+  }
+
+  static get elm_message(){
+    return Frame.root.querySelector('.message')
+  }
+
+  static message_on(message){
+    const div = document.createElement('div')
+    div.className = 'message'
+    div.innerHTML = message
+    Frame.root.appendChild(div)
+  }
+
+  static message_off(){
+    Frame.root.removeChild(this.elm_message)
+  }
+
+  static create(){
     Frame.frame_datas = JSON.parse(Frame.asset_json)
     Frame.view()
     Frame.set_collision()
@@ -86,12 +105,6 @@ export class Frame{
         p.className = Frame.frame_datas[i]
         Frame.root.appendChild(p)
         p.setAttribute('data-num' , i)
-    }
-  }
-
-  finish(){
-    if(this.resolve){
-      this.resolve(this)
     }
   }
 
@@ -251,11 +264,7 @@ export class Frame{
   }
 
   static stage_clear(){
-    // console.log('stage cleared !!')
-
     Main.is_clear = true
-
-    // 画面の動きを止める
     Control.clear()
     Pacman.move_stop()
     Pacman.close_mouse()
@@ -264,15 +273,28 @@ export class Frame{
     setTimeout((()=>{
       Frame.root.setAttribute('data-status' , 'clear')
     }),500)
-
     setTimeout((()=>{
+      Control.direction = null
       Main.is_clear = false
       Frame.crear()
       Frame.root.setAttribute('data-status' , '')
-      Frame.start()
+      Frame.create()
       Feed.reset_data()
-      Ghost.reset_data()
-      Pacman.reset_data()
+      Frame.start()
     }),4000)
+  }
+
+  static crashed(){
+    Control.clear()
+    Ghost.move_stops()
+    Ghost.remove_all()
+    setTimeout((()=>{
+      Control.direction = null
+      Main.is_dead = false
+      Frame.root.setAttribute('data-status' , '')
+      Frame.set_ghost_start_area()
+      Pacman.remove()
+      Frame.start()
+    }),3000)
   }
 }

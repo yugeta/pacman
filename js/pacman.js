@@ -3,22 +3,23 @@ import { Frame }    from './frame.js'
 import { Control }  from './control.js'
 import { Feed }     from './feed.js'
 import { Ghost }    from './ghost.js'
+import { Footer }   from './footer.js'
 
 export class Pacman{
-  // 初期表示座標処理
-  constructor(){
-    Pacman.start()
-  }
 
-  static start(){
+  static init(){
+    Footer.delete_life()
+    Pacman.direction = null
+    Pacman.next_pos  = null
     Pacman.create()
     Pacman.coodinates = Pacman.start_coodinates
     Frame.put(Pacman.elm, Pacman.coodinates)
     Pacman.elm.style.setProperty('--anim-speed' , `${Main.anim_speed}ms` , '')
   }
-  static reset_data(){
-    Pacman.direction = null
-    Pacman.start()
+
+  static start(){
+    if(!Control.direction){return}
+    Pacman.move(Control.direction)
   }
 
   static create(){
@@ -36,10 +37,11 @@ export class Pacman{
   }
 
   static get elm(){
-    return document.querySelector('.pacman')
+    return document.querySelector('.frame-area .pacman')
   }
 
   static move(direction){
+    if(Frame.is_ready){return}
     if(Pacman.direction){
       return
     }
@@ -126,8 +128,8 @@ export class Pacman{
   }
 
   static crashed(elm_ghost){
+    Pacman.elm.setAttribute('data-anim' , '')
     setTimeout(Pacman.dead , 1000)
-    Pacman.move_stop()
   }
 
   static dead(){
@@ -139,12 +141,20 @@ export class Pacman{
   static move_stop(){
     const anim = Pacman.elm.getAnimations()
     if(anim && anim.length){
+      console.log(anim.length)
       anim[0].pause()
+    }
+    else{
+
     }
   }
 
   static hidden(){
     Pacman.elm.style.setProperty('display','none','')
+  }
+
+  static remove(){
+    Pacman.elm.parentNode.removeChild(Pacman.elm)
   }
 
   static close_mouse(){
