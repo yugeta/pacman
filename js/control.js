@@ -20,17 +20,14 @@ export class Control{
     const key  = e.keyCode
     const name = Control.key2name(key)
     if(!name){return}
-    Control.key_data = {
-      key_code : key,
-      name     : name,
-    }
-    Pacman.move(Control.key_data)
+    Control.direction = name
+    Pacman.move(Control.direction)
   }
 
   keyup(e){
-    if(!Control.key_data){return}
+    if(!Control.direction){return}
     const name = Control.key2name(e.keyCode)
-    if(Control.key_data.name !== name){return}
-    delete Control.key_data
+    if(Control.direction !== name){return}
+    delete Control.direction
   }
 }

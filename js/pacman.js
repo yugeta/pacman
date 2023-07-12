@@ -4,7 +4,7 @@ import { Control }  from './control.js'
 export class Pacman{
   // 初期表示座標処理
   constructor(){
-    Pacman.anim_speed = 400
+    Pacman.anim_speed = 300
     Pacman.coodinates = this.start_coodinates
     Frame.put(this.elm, Pacman.coodinates)
     this.elm.style.setProperty('--anim-speed' , `${Pacman.anim_speed}ms` , '')
@@ -25,39 +25,24 @@ export class Pacman{
     return document.querySelector('.pacman')
   }
 
-  static move(key_data){
-    if(Pacman.key_data ){
-      if(Pacman.key_data.name !== key_data.name){
-        Pacman.key_data = key_data
-      }
+  static move(direction){
+    if(Pacman.direction){
       return
     }
-    Pacman.key_data = key_data
+    Pacman.direction = direction
     
     this.elm.setAttribute('data-anim' , "true")
     this.moving()
   }
+
   static moving(){
-    const next_pos = {
-      x : Pacman.coodinates.x,
-      y : Pacman.coodinates.y,
+    const next_pos = Pacman.next_pos(Pacman.direction)
+    if(Frame.is_collision(next_pos)){
+      this.elm.setAttribute('data-anim' , "")
+      delete Pacman.direction
+      return
     }
-    switch(Pacman.key_data.name){
-      case 'left':
-        next_pos.x -= 1
-        break
-      case 'right':
-        next_pos.x += 1
-        break
-      case 'up':
-        next_pos.y -= 1
-        break
-      case 'down':
-        next_pos.y += 1
-        break
-      default: return
-    }
-    this.elm.setAttribute('data-direction' , Pacman.key_data.name)
+    this.elm.setAttribute('data-direction' , Pacman.direction)
     this.elm.animate(
       [
         {
@@ -79,15 +64,38 @@ export class Pacman{
   }
 
   static moved(next_pos){
-    if(!Pacman.key_data){return}
     Pacman.coodinates = next_pos
     Frame.put(this.elm, Pacman.coodinates)
-    if(Control.key_data){
-      Pacman.moving()
+    
+    if(Control.direction && Control.direction !== Pacman.direction){
+      const temp_pos = Pacman.next_pos(Control.direction)
+      if(!Frame.is_collision(temp_pos)){
+        Pacman.direction = Control.direction
+      }
     }
-    else{
-      this.elm.setAttribute('data-anim' , "")
-      delete Pacman.key_data
+    Pacman.moving()
+  }
+
+  static next_pos(name){
+    const next_pos = {
+      x : Pacman.coodinates.x,
+      y : Pacman.coodinates.y,
     }
+    switch(name){
+      case 'left':
+        next_pos.x -= 1
+        break
+      case 'right':
+        next_pos.x += 1
+        break
+      case 'up':
+        next_pos.y -= 1
+        break
+      case 'down':
+        next_pos.y += 1
+        break
+      default: return
+    }
+    return next_pos
   }
 }

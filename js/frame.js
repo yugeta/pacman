@@ -19,6 +19,10 @@ export class Frame{
     return s5.offsetWidth
   }
 
+  get cols_count(){
+    return ~~(Frame.root.offsetWidth / Frame.block_size)
+  }
+
   load_asset(){
     const xhr = new XMLHttpRequest()
     xhr.open('get' , `assets/frame.json` , true)
@@ -29,6 +33,8 @@ export class Frame{
       if (xhr.status === 200) {
         Frame.frame_datas =this.frame_datas = JSON.parse(e.target.response)
         this.view()
+        this.set_collision()
+        this.finish()
       }
     }).bind(this)
     xhr.send()
@@ -40,7 +46,6 @@ export class Frame{
         p.className = this.frame_datas[i]
         Frame.root.appendChild(p)
     }
-    this.finish()
   }
 
   finish(){
@@ -68,5 +73,31 @@ export class Frame{
   static pos(elm , pos){
     elm.style.setProperty('left' , `${pos.x}px` , '')
     elm.style.setProperty('top'  , `${pos.y}px` , '')
+  }
+
+  // 壁座標に1を設置
+  set_collision(){
+    const cols_count = this.cols_count
+    const maps = []
+    let row_count = 0
+    for(const frame_data of this.frame_datas){
+      maps[row_count] = maps[row_count] || []
+      // 移動できる
+      if(frame_data.match(/^P/i) || frame_data.toUpperCase() === 'S5'){
+        maps[row_count].push(0)
+      }
+      // 壁
+      else{
+        maps[row_count].push(1)
+      }
+      if(maps[row_count].length === cols_count){
+        row_count++
+      }
+    }
+    Frame.map = this.map = maps
+  }
+
+  static is_collision(map){
+    return Frame.map[map.y][map.x]
   }
 }
