@@ -210,3 +210,13 @@
   border-radius : 50%;
   background-color:yellow;
 }
+
+/* Through */
+.frame-area .TU::before{
+  position:absolute;
+  bottom:calc(var(--block) / 4);
+  left:0;
+  width : 100%;
+  height: calc(var(--block) / 4);
+  background-color:pink;
+}

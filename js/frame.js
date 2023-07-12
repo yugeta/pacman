@@ -27,6 +27,7 @@ export class Frame{
     return Frame.root.querySelector(`[data-num='${num}']`)
   }
 
+
   load_asset(){
     const xhr = new XMLHttpRequest()
     xhr.open('get' , `assets/frame.json` , true)
@@ -81,14 +82,17 @@ export class Frame{
   }
 
   // 壁座標に1を設置
-  set_collision(){
+  set_collision(type){
     const cols_count = this.cols_count
     const maps = []
     let row_count = 0
     for(const frame_data of this.frame_datas){
       maps[row_count] = maps[row_count] || []
       // 移動できる
-      if(frame_data.match(/^P/i) || frame_data.toUpperCase() === 'S5'){
+      if(frame_data.match(/^P/i)
+      || frame_data.toUpperCase() === 'S5'
+      || frame_data.match(/^W/i)
+       || frame_data.match(/^T/i)){
         maps[row_count].push(0)
       }
       // 壁
@@ -103,7 +107,22 @@ export class Frame{
   }
 
   static is_collision(map){
+    if(!map || !Frame.map || !Frame.map[map.y]){return}
     return Frame.map[map.y][map.x]
+  }
+  static is_through(map , direction){
+    // if(!map || !Frame.map || !Frame.map[map.y] || !Frame.map[map.y][map.x]){return}
+    const through_item = Frame.frame_datas[Frame.get_pos2num(map)]
+    // console.log(direction,through_item)
+    if(through_item === 'TU' && direction !== 'up'
+    || through_item === 'TD' && direction !== 'down'
+    || through_item === 'TL' && direction !== 'left'
+    || through_item === 'TR' && direction !== 'right'){
+      return false
+    }
+    else{
+      return true
+    }
   }
 
   static get_pos2num(pos){
@@ -115,19 +134,19 @@ export class Frame{
       y : ~~(num / Frame.map[0].length),
     }
   }
-  
+
   static is_warp(map){
     const num = Frame.get_pos2num(map)
     return Frame.frame_datas[num] === 'W1' ? true : false
   }
-  
+
   static get_another_warp_pos(map){
     const warp_index_arr = Frame.filterIndex(Frame.frame_datas , 'W1')
     const current_index = Frame.get_pos2num(map)
     const another_num = warp_index_arr.find(e => e !== current_index)
     return Frame.get_num2pos(another_num)
   }
-  
+
   static filterIndex(datas,target){
     const res_arr = []
     for(let i=0; i<datas.length; i++){
@@ -136,5 +155,28 @@ export class Frame{
       }
     }
     return res_arr
+  }
+
+  static next_pos(direction , pos){
+    const temp_pos = {
+      x : pos.x,
+      y : pos.y,
+    }
+    switch(direction){
+      case 'left':
+        temp_pos.x -= 1
+        break
+      case 'right':
+        temp_pos.x += 1
+        break
+      case 'up':
+        temp_pos.y -= 1
+        break
+      case 'down':
+        temp_pos.y += 1
+        break
+      default: return
+    }
+    return temp_pos
   }
 }

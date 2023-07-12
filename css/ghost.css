@@ -1,4 +1,6 @@
 .ghost{
+  position:absolute;
+  z-index:9;
   display:inline-block;
   --size-width : calc(var(--size-chara) * 1.0);
   --size-eye   : calc(var(--size-width) * 0.3);
@@ -7,6 +9,7 @@
 
   width:var(--size-chara);
   height:var(--size-chara);
+  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2));
 }
 .ghost[data-color='1']{--color-body : red;}
 .ghost[data-color='2']{--color-body : orange;}
@@ -65,11 +68,11 @@
   margin-left  : 0;
   margin-right : 50%;
 }
-.ghost:not([data-status='weak']) > .face[data-direction='top'] > *::before{
+.ghost:not([data-status='weak']) > .face[data-direction='up'] > *::before{
   margin-top    : 0;
   margin-bottom : 50%;
 }
-.ghost:not([data-status='weak']) > .face[data-direction='bottom'] > *::before{
+.ghost:not([data-status='weak']) > .face[data-direction='down'] > *::before{
   margin-top    : 50%;
   margin-bottom : 0;
 }
@@ -97,18 +100,4 @@
 }
 .ghost > .under path{
   fill:var(--color-body);
-}
-
-.ghost{
-  position:absolute;
-  z-index:9;
-  display:inline-block;
-  --size-width : calc(var(--size-chara) * 1.0);
-  --size-eye   : calc(var(--size-width) * 0.3);
-  --size-under : calc(var(--size-width) * 0.2);
-  --color-body : red;
-
-  width:var(--size-chara);
-  height:var(--size-chara);
-  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2));
 }

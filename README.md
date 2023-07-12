@@ -10,7 +10,7 @@ Author : Yugeta.Koji
 
 
 # Session
-- 自キャラの移動に伴ってエサを食べるモード
+- 敵キャラを動かします。
 
 # Blog
-- [Javascript: パックマンをHTMLで作ってみるブログ#9 エサを食べるモード](https://blog.myntinc.com/2023/07/javascript-html9.html)
+- [Javascript: パックマンをHTMLで作ってみるブログ#10 敵キャラ移動](https://blog.myntinc.com/2023/07/javascript-html10.html)

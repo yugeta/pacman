@@ -3,7 +3,9 @@ import { Frame }   from './frame.js'
 import { Control } from './control.js'
 import { Pacman }  from './pacman.js'
 
-export const Main = {}
+export const Main = {
+  anim_speed : 200
+}
 
 function init(){
   new Frame().then(()=>{
@@ -20,4 +22,5 @@ switch(document.readyState){
     break
   default:
     window.addEventListener('DOMContentLoaded' , (()=>init()))
+
 }

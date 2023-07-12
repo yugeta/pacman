@@ -1,3 +1,4 @@
+import { Main }     from './main.js'
 import { Frame }    from './frame.js'
 import { Control }  from './control.js'
 import { Feed }     from './feed.js'
@@ -5,10 +6,9 @@ import { Feed }     from './feed.js'
 export class Pacman{
   // 初期表示座標処理
   constructor(){
-    Pacman.anim_speed = 300
     Pacman.coodinates = this.start_coodinates
     Frame.put(this.elm, Pacman.coodinates)
-    this.elm.style.setProperty('--anim-speed' , `${Pacman.anim_speed}ms` , '')
+    this.elm.style.setProperty('--anim-speed' , `${Main.anim_speed}ms` , '')
   }
 
   get start_coodinates(){
@@ -37,11 +37,11 @@ export class Pacman{
   }
 
   static moving(){
-    let next_pos = Pacman.next_pos(Pacman.direction)
+    let next_pos = Pacman.next_pos(Pacman.direction , Pacman.coodinates)
     //warp
     if(Frame.is_warp(next_pos)){
       Pacman.coodinates = Frame.get_another_warp_pos(next_pos)
-      next_pos = Pacman.next_pos(Pacman.direction)
+      next_pos = Pacman.next_pos(Pacman.direction , Pacman.coodinates)
     }
     if(Frame.is_collision(next_pos)){
       this.elm.setAttribute('data-anim' , "")
@@ -61,7 +61,7 @@ export class Pacman{
         }
       ],
       {
-        duration: Pacman.anim_speed
+        duration: Main.anim_speed
       }
     )
     Promise.all(this.elm.getAnimations().map(e => e.finished)).then(()=>{
@@ -75,7 +75,7 @@ export class Pacman{
     Feed.move_map()
     
     if(Control.direction && Control.direction !== Pacman.direction){
-      const temp_pos = Pacman.next_pos(Control.direction)
+      const temp_pos = Pacman.next_pos(Control.direction , Pacman.coodinates)
       if(!Frame.is_collision(temp_pos)){
         Pacman.direction = Control.direction
       }
@@ -83,27 +83,7 @@ export class Pacman{
     Pacman.moving()
   }
 
-  static next_pos(name){
-    const next_pos = {
-      x : Pacman.coodinates.x,
-      y : Pacman.coodinates.y,
-    }
-    switch(name){
-      case 'left':
-        next_pos.x -= 1
-        break
-      case 'right':
-        next_pos.x += 1
-        break
-      case 'up':
-        next_pos.y -= 1
-        break
-      case 'down':
-        next_pos.y += 1
-        break
-      default: return
-    }
-    return next_pos
+  static next_pos(direction){
+    return Frame.next_pos(direction , Pacman.coodinates)
   }
-
 }
