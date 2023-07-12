@@ -7,6 +7,7 @@ export const Main = {
   anim_speed         : 200,
   ghost_normal_speed : 200,
   ghost_weak_speed   : 400,
+  ghost_dead_speed   : 50,
   is_crash           : false,
   is_dead            : false,
 }

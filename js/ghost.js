@@ -64,7 +64,7 @@ export class Ghost{
       if (xhr.status === 200) {
         this.asset = e.target.response
         this.set_ghost()
-        setTimeout(this.set_move.bind(this) , 1000)
+        setTimeout(this.set_move.bind(this) , 300)
       }
     }).bind(this)
     xhr.send()
@@ -76,7 +76,6 @@ export class Ghost{
       const coodinate = Ghost.get_coodinate(elm_ghost)
       Frame.put(elm_ghost, coodinate)
       elm_ghost.innerHTML = this.asset
-      // break;//デバッグ用（敵１体のみ表示の場合）
     }
   }
 
@@ -91,10 +90,11 @@ export class Ghost{
     if(!elm_ghost){return}
     const data       = Ghost.get_data(elm_ghost)
     const coodinate  = Ghost.get_coodinate(elm_ghost)
-    const directions = Ghost.get_enable_directions(coodinate , data.direction) || Ghost.get_enable_directions(coodinate)
-    const direction  = Ghost.get_direction(directions)
+    const status     = Ghost.get_status(elm_ghost)
+    const directions = Ghost.get_enable_directions(coodinate , data.direction , status) || Ghost.get_enable_directions(coodinate)
+    const direction  = Ghost.get_direction(elm_ghost, directions)
+    const next_pos   = Frame.next_pos(direction , coodinate)
     Ghost.set_direction(elm_ghost , direction)
-    const next_pos = Frame.next_pos(direction , coodinate)
     this.moving(elm_ghost , next_pos)
   }
   moving(elm_ghost , next_pos){
@@ -121,11 +121,20 @@ export class Ghost{
       y : next_pos.y * Frame.block_size,
     }
     if(Pacman.is_collision(next_pos)){
-      Ghost.crashed()
-      Pacman.crashed(elm_ghost)
+      switch(elm_ghost.getAttribute('data-status')){
+        case 'weak':
+          Ghost.dead(elm_ghost)
+          break
+        case 'dead':
+          break
+        default:
+          Ghost.crashed(elm_ghost)
+          Pacman.crashed(elm_ghost)
+          return
+      }
     }
     data.next_pos = next_pos
-
+    const id = 'ghost_anim'
     elm_ghost.animate(
       [
         {
@@ -138,26 +147,46 @@ export class Ghost{
         }
       ],
       {
-        duration: Frame.is_weak ? Main.ghost_weak_speed : Main.ghost_normal_speed
+        id : id,
+        duration: Ghost.get_speed(elm_ghost)
       }
     )
-    Promise.all(elm_ghost.getAnimations().map(e => e.finished))
+
+    Promise.all([elm_ghost.getAnimations().find(e => e.id === id).finished])
     .then(this.moved.bind(this , elm_ghost))
   }
-  moved(elm_ghost){
+  moved(elm_ghost , e){
     const data = Ghost.get_data(elm_ghost)
     
-    elm_ghost.style.setProperty('left'  , `${data.next_pos.x * Frame.block_size}px` , '')
-    elm_ghost.style.setProperty('top' , `${data.next_pos.y * Frame.block_size}px` , '')
+    elm_ghost.style.setProperty('left' , `${data.next_pos.x * Frame.block_size}px` , '')
+    elm_ghost.style.setProperty('top'  , `${data.next_pos.y * Frame.block_size}px` , '')
     
     data.coodinate = data.next_pos
     
     if(Main.is_dead){return}
     if(Pacman.is_collision(data.coodinate)){
-      Ghost.crashed()
-      Pacman.crashed(elm_ghost)
+      switch(elm_ghost.getAttribute('data-status')){
+        case 'weak':
+          Ghost.dead(elm_ghost)
+          break
+        case 'dead':
+          break
+        default:
+          Ghost.crashed(elm_ghost)
+          Pacman.crashed(elm_ghost)
+          return
+      }
     }
-    else if(elm_ghost.hasAttribute('data-reverse')){
+
+    // dead -> alive
+    if(Ghost.get_status(elm_ghost) === 'dead'){
+      const current_stage_item = Frame.frame_datas[Frame.get_pos2num(data.coodinate)]
+      if(current_stage_item.match(/^T/i)){
+        Ghost.alive(elm_ghost)
+      }
+    }
+
+    if(elm_ghost.hasAttribute('data-reverse')){
       elm_ghost.removeAttribute('data-reverse')
       this.reverse_move(elm_ghost , data)
     }
@@ -173,8 +202,8 @@ export class Ghost{
     this.moving(elm_ghost , next_pos)
   }
   next_move(elm_ghost , data){
-    const directions = Ghost.get_enable_directions(data.coodinate , data.direction)
-    const direction = Ghost.get_direction(directions)
+    const directions = Ghost.get_enable_directions(data.coodinate , data.direction , Ghost.get_status(elm_ghost))
+    const direction  = Ghost.get_direction(elm_ghost, directions)
     Ghost.set_direction(elm_ghost , direction)
     const next_pos = Frame.next_pos(data.direction , data.coodinate)
     if(Frame.is_collision(next_pos)){
@@ -185,14 +214,53 @@ export class Ghost{
     }
   }
 
-  static get_direction(directions){
+  static get_direction(elm_ghost, directions){
     if(!directions || !directions.length){return null}
-    const direction_num = Math.floor(Math.random() * directions.length)
-    return directions[direction_num] || null
+
+    switch(Ghost.get_status(elm_ghost)){
+      // dead : go to the start-area
+      case 'dead':
+        if(directions.length === 1){
+          return directions[0]
+        }
+        
+        const ghost_data  = Ghost.get_data(elm_ghost)
+        const start_datas = Frame.ghost_start_area
+
+        if(directions.indexOf('right') !== -1
+        && ghost_data.coodinate.x > start_datas.x){
+          const index = directions.findIndex(e => e === 'right')
+          directions.splice(index,1)
+        }
+        if(directions.indexOf('left') !== -1
+        && ghost_data.coodinate.x < start_datas.x){
+          const index = directions.findIndex(e => e === 'left')
+          directions.splice(index,1)
+        }
+        if(directions.indexOf('bottom') !== -1
+        && ghost_data.coodinate.y > start_datas.y){
+          const index = directions.findIndex(e => e === 'bottom')
+          directions.splice(index,1)
+        }
+        if(directions.indexOf('top') !== -1
+        && ghost_data.coodinate.y < start_datas.y){
+          const index = directions.findIndex(e => e === 'top')
+          directions.splice(index,1)
+        }
+
+        const num = Math.floor(Math.random() * directions.length)
+        return directions[num] || null
+
+      // normal
+      default:
+        const direction_num = Math.floor(Math.random() * directions.length)
+        return directions[direction_num] || null
+    }
+    
   }
 
   // 移動可能な方向の一覧を取得する
-  static get_enable_directions(pos , direction){
+  static get_enable_directions(pos , direction , status){
     const directions = []
 
     // Through（通り抜け）
@@ -204,28 +272,28 @@ export class Ghost{
     // 右 : right
     if(pos.x + 1 < Frame.map[pos.y].length
     && !Frame.is_collision({x: pos.x + 1, y: pos.y})
-    && Frame.is_through({x: pos.x + 1, y: pos.y} , 'right')
+    && Frame.is_through({x: pos.x + 1, y: pos.y} , 'right' , status)
     && direction !== 'left'){
       directions.push('right')
     }
     // 左 : left
     if(pos.x - 1 >= 0
     && !Frame.is_collision({x: pos.x - 1, y: pos.y})
-    && Frame.is_through({x: pos.x - 1, y: pos.y} , 'left')
+    && Frame.is_through({x: pos.x - 1, y: pos.y} , 'left' , status)
     && direction !== 'right'){
       directions.push('left')
     }
     // 上 : up 
     if(pos.y - 1 >= 0
     && !Frame.is_collision({x: pos.x, y: pos.y - 1})
-    && Frame.is_through({x: pos.x, y: pos.y - 1} , 'up')
+    && Frame.is_through({x: pos.x, y: pos.y - 1} , 'up' , status)
     && direction !== 'down' ){
       directions.push('up')
     }
     // 下 : down
     if(pos.y + 1 < Frame.map.length
     && !Frame.is_collision({x: pos.x, y: pos.y + 1})
-    && Frame.is_through({x: pos.x, y: pos.y + 1} , 'down')
+    && Frame.is_through({x: pos.x, y: pos.y + 1} , 'down' , status)
     && direction !== 'up'){
       directions.push('down')
     }
@@ -248,34 +316,35 @@ export class Ghost{
   }
 
   static set_direction(elm_ghost , direction){
-    const data       = Ghost.get_data(elm_ghost)
+    const data     = Ghost.get_data(elm_ghost)
     data.direction = direction
-    const head = elm_ghost.querySelector('.head')
+    const head     = elm_ghost.querySelector('.head')
     if(!head){return}
     head.setAttribute('data-direction' , direction)
   }
 
   static power_on(){
     for(const elm of Ghost.elm_ghosts){
+      if(Ghost.get_status(elm) === 'dead'){continue}
       elm.setAttribute('data-reverse' , '1')
       elm.setAttribute('data-status' , 'weak')
     }
   }
   static power_off(){
     for(const elm of Ghost.elm_ghosts){
-      if(elm.getAttribute('data-status') === 'weak'){continue}
-      elm.removeAttribute('data-status')
+      if(elm.getAttribute('data-status') === 'weak'){
+        elm.setAttribute('data-status' , '')
+      }
     }
   }
-
-  static crashed(){
+  
+  static crashed(elm_ghost){
     Main.is_crash = true
-    for(const elm of Ghost.elm_ghosts){
-      Main.is_dead = true
-      const svg = elm.querySelector('.under svg')
-      svg.pauseAnimations()
-      const anim = elm.getAnimations()
-      if(!anim || !anim.length){continue}
+    Main.is_dead = true
+    const svg = elm_ghost.querySelector('.under svg')
+    svg.pauseAnimations()
+    const anim = elm_ghost.getAnimations()
+    if(anim && anim.length){
       anim[0].pause()
     }
   }
@@ -283,6 +352,29 @@ export class Ghost{
   static hidden_all(){
     for(const elm of Ghost.elm_ghosts){
       elm.style.setProperty('display' , 'none' , '');
+    }
+  }
+
+  static dead(elm_ghost){
+    elm_ghost.setAttribute('data-status' , 'dead')
+  }
+
+  static alive(elm_ghost){
+    elm_ghost.setAttribute('data-status' , '')
+  }
+
+  static get_status(elm_ghost){
+    return elm_ghost.getAttribute('data-status')
+  }
+
+  static get_speed(elm_ghost){
+    switch(Ghost.get_status(elm_ghost)){
+      case 'weak':
+        return Main.ghost_weak_speed
+      case 'dead':
+        return Main.ghost_dead_speed
+      default:
+        return Main.ghost_normal_speed
     }
   }
 }

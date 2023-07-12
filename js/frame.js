@@ -28,13 +28,16 @@ export class Frame{
   }
 
   static get is_weak(){
-    if(Frame.root.getAttribute('data-power') === '1'){
-      return true
-    }
-    else{
-      return false
+    const power = Frame.root.getAttribute('data-power')
+    switch(power){
+      case '1':
+      case '2':
+        return true
+      default:
+        return false
     }
   }
+
 
   load_asset(){
     const xhr = new XMLHttpRequest()
@@ -44,10 +47,11 @@ export class Frame{
       if(xhr.readyState !== XMLHttpRequest.DONE){return}
       if(xhr.status === 404){return}
       if (xhr.status === 200) {
-        Frame.frame_datas =this.frame_datas = JSON.parse(e.target.response)
+        Frame.frame_datas = this.frame_datas = JSON.parse(e.target.response)
         this.view()
         this.set_collision()
         this.finish()
+        this.set_ghost_start_area()
       }
     }).bind(this)
     xhr.send()
@@ -118,17 +122,31 @@ export class Frame{
     if(!map || !Frame.map || !Frame.map[map.y]){return}
     return Frame.map[map.y][map.x]
   }
-  static is_through(map , direction){
-    // if(!map || !Frame.map || !Frame.map[map.y] || !Frame.map[map.y][map.x]){return}
+
+  // type @ [pacman , ghost]
+  static is_through(map , direction, status){
     const through_item = Frame.frame_datas[Frame.get_pos2num(map)]
-    if(through_item === 'TU' && direction !== 'up'
-    || through_item === 'TD' && direction !== 'down'
-    || through_item === 'TL' && direction !== 'left'
-    || through_item === 'TR' && direction !== 'right'){
-      return false
+    if(status === 'dead'){
+      if(through_item === 'TU' && direction === 'up'
+      || through_item === 'TD' && direction === 'down'
+      || through_item === 'TL' && direction === 'left'
+      || through_item === 'TR' && direction === 'right'){
+        return false
+      }
+      else{
+        return true
+      }
     }
     else{
-      return true
+      if(through_item === 'TU' && direction !== 'up'
+      || through_item === 'TD' && direction !== 'down'
+      || through_item === 'TL' && direction !== 'left'
+      || through_item === 'TR' && direction !== 'right'){
+        return false
+      }
+      else{
+        return true
+      }
     }
   }
 
@@ -144,7 +162,6 @@ export class Frame{
 
   static is_warp(map){
     const num = Frame.get_pos2num(map)
-    // console.log(num,Frame.frame_datas[num])
     return Frame.frame_datas[num] === 'W1' ? true : false
   }
 
@@ -186,5 +203,26 @@ export class Frame{
       default: return
     }
     return temp_pos
+  }
+
+  set_ghost_start_area(){
+    const ghost_start_area = []
+    for(let i=0; i<this.frame_datas.length; i++){
+      if(this.frame_datas[i] !== 'TU'
+      && this.frame_datas[i] !== 'TD'
+      && this.frame_datas[i] !== 'TL'
+      && this.frame_datas[i] !== 'TR'){continue}
+      const pos = Frame.get_num2pos(i)
+      ghost_start_area.push({
+        num : i,
+        pos : pos,
+      })
+    }
+    const pos = {
+      x : ghost_start_area.map(e => e.pos.x).reduce((sum , e)=>{ return sum + e}) / ghost_start_area.length,
+      y : ghost_start_area.map(e => e.pos.y).reduce((sum , e)=>{ return sum + e}) / ghost_start_area.length,
+    }
+
+    Frame.ghost_start_area = pos
   }
 }

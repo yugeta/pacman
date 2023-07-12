@@ -111,6 +111,7 @@
   right:25%;
 }
 
+
 .ghost > .mouse{
   height : 30%;
   background-color : var(--color-body);
@@ -127,9 +128,74 @@
   margin-top:10px;
 }
 
+
 .ghost > .under{
   height : var(--size-under);
 }
 .ghost > .under path{
   fill:var(--color-body);
+}
+
+
+.ghost[data-status='dead']{
+  --color-body : blue;
+}
+
+.ghost[data-status='dead']{
+  --color-body : transparent;
+}
+
+
+/* power-limit-soon */
+[data-power='2'] .ghost[data-status='weak']{
+  animation-name : power_soon_body;
+  animation-duration:0.4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+[data-power='2'] .ghost[data-status='weak'] > .head .eyes .eye-left,
+[data-power='2'] .ghost[data-status='weak'] > .head .eyes .eye-right{
+  animation-name : power_soon_eyes;
+  animation-duration:0.4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+[data-power='2'] .ghost[data-status='weak'] > .mouse svg path{
+  animation-name : power_soon_mouse;
+  animation-duration:0.4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes power_soon_body{
+  0%{
+    --color-body:blue;
+  }
+  50%{
+    --color-body:white;
+  }
+  100%{
+    --color-body:blue;
+  }
+}
+@keyframes power_soon_eyes{
+  0%{
+    background-color:white;
+  }
+  50%{
+    background-color:red;
+  }
+  100%{
+    background-color:white;
+  }
+}
+@keyframes power_soon_mouse{
+  0%{
+    stroke:white;
+  }
+  50%{
+    stroke:red;
+  }
+  100%{
+    stroke:white;
+  }
 }

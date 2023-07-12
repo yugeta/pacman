@@ -43,9 +43,10 @@ export class Pacman{
     //warp
     if(Frame.is_warp(Pacman.next_pos)){
       Pacman.coodinates = Frame.get_another_warp_pos(Pacman.next_pos)
-      Pacman.next_pos = Pacman.next_pos(Pacman.direction , Pacman.coodinates)
+      Pacman.next_pos   = Frame.next_pos(Pacman.direction , Pacman.coodinates)
     }
-    if(Frame.is_collision(Pacman.next_pos)){
+    if(Frame.is_collision(Pacman.next_pos)
+    && !Pacman.is_wall(Pacman.next_pos)){
       this.elm.setAttribute('data-anim' , "")
       delete Pacman.direction
       return
@@ -78,11 +79,25 @@ export class Pacman{
     
     if(Control.direction && Control.direction !== Pacman.direction){
       const temp_pos = Frame.next_pos(Control.direction , Pacman.coodinates)
-      if(!Frame.is_collision(temp_pos)){
+      if(!Frame.is_collision(temp_pos)
+      && !Pacman.is_wall(temp_pos)){
         Pacman.direction = Control.direction
       }
     }
     Pacman.moving()
+  }
+
+  static is_wall(map){
+    const through_item = Frame.frame_datas[Frame.get_pos2num(map)]
+    if(through_item === 'TU'
+    || through_item === 'TD'
+    || through_item === 'TL'
+    || through_item === 'TR'){
+      return true
+    }
+    else{
+      false
+    }
   }
 
   static is_collision(pos){
@@ -98,7 +113,7 @@ export class Pacman{
     }
   }
 
-  static crashed(){
+  static crashed(elm_ghost){console.log('pacman-dead' , elm_ghost)
     setTimeout(Pacman.dead , 1000)
     const anim = Pacman.elm.getAnimations()
     if(anim && anim.length){
