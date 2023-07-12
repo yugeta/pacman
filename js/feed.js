@@ -1,6 +1,6 @@
 import { Frame }     from './frame.js'
 import { Pacman }    from './pacman.js'
-
+import { Ghost }     from './ghost.js'
 
 export class Feed{
   
@@ -12,6 +12,8 @@ export class Feed{
         this.eat_normal_dot(num)
         break
       case 'P2':
+        Feed.power_on()
+        setTimeout(Feed.power_off , 10000)
         this.eat_big_dot(num)
         break
     }
@@ -29,5 +31,14 @@ export class Feed{
     if(!elm){return}
     
     elm.setAttribute('class','S5')
+  }
+
+  static power_on(){
+    Frame.root.setAttribute('data-power' , '1')
+    Ghost.power_on()
+  }
+  static power_off(){
+    Frame.root.setAttribute('data-power' , '0')
+    Ghost.power_off()
   }
 }

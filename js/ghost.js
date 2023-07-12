@@ -3,7 +3,7 @@ import { Frame }  from './frame.js'
 
 export class Ghost{
   constructor(){
-  this.put_element()
+    this.put_element()
   }
 
   static datas = [
@@ -79,6 +79,7 @@ export class Ghost{
       const coodinate = Ghost.get_coodinate(elm_ghost)
       Frame.put(elm_ghost, coodinate)
       elm_ghost.innerHTML = this.asset
+      // break;//デバッグ用（敵１体のみ表示の場合）
     }
   }
 
@@ -132,7 +133,7 @@ export class Ghost{
         }
       ],
       {
-        duration: Main.anim_speed
+        duration: Frame.is_weak ? Main.ghost_weak_speed : Main.ghost_normal_speed
       }
     )
     Promise.all(elm_ghost.getAnimations().map(e => e.finished))
@@ -141,13 +142,29 @@ export class Ghost{
   moved(elm_ghost , pos){
     elm_ghost.style.setProperty('left'  , `${pos.x * Frame.block_size}px` , '')
     elm_ghost.style.setProperty('top'   , `${pos.y * Frame.block_size}px` , '')
+
     const data = Ghost.get_data(elm_ghost)
     data.coodinate = pos
+
+    if(elm_ghost.hasAttribute('data-reverse')){
+      elm_ghost.removeAttribute('data-reverse')
+      this.reverse_move(elm_ghost , data)
+    }
+    else{
+      this.next_move(elm_ghost , data)
+    }
+  }
+  reverse_move(elm_ghost , data){
+    const direction = Ghost.reverse_direction(data.direction)
+    Ghost.set_direction(elm_ghost , direction)
+    data.direction = direction
+    const next_pos = Frame.next_pos(data.direction , data.coodinate)
+    this.moving(elm_ghost , next_pos)
+  }
+  next_move(elm_ghost , data){
     const directions = Ghost.get_enable_directions(data.coodinate , data.direction)
     const direction = Ghost.get_direction(directions)
     Ghost.set_direction(elm_ghost , direction)
-
-
     const next_pos = Frame.next_pos(data.direction , data.coodinate)
     if(Frame.is_collision(next_pos)){
       this.move(elm_ghost)
@@ -155,7 +172,7 @@ export class Ghost{
     else{
       this.moving(elm_ghost , next_pos)
     }
- }
+  }
 
   static get_direction(directions){
     if(!directions || !directions.length){return null}
@@ -206,20 +223,34 @@ export class Ghost{
       return directions
     }
     else{
-      switch(direction){
-        case 'right' : return ['left']
-        case 'left'  : return ['right']
-        case 'up'    : return ['down']
-        case 'down'  : return ['up']
-      }
+      return [Ghost.reverse_direction(direction)]
+    }
+  }
+
+  static reverse_direction(direction){
+    switch(direction){
+      case 'right' : return 'left'
+      case 'left'  : return 'right'
+      case 'up'    : return 'down'
+      case 'down'  : return 'up'
     }
   }
 
   static set_direction(elm_ghost , direction){
     const data       = Ghost.get_data(elm_ghost)
     data.direction = direction
-    const face = elm_ghost.querySelector('.face')
-    if(!face){return}
-    face.setAttribute('data-direction' , direction)
+    const head = elm_ghost.querySelector('.head')
+    if(!head){return}
+    head.setAttribute('data-direction' , direction)
   }
+
+  static power_on(){
+    for(const elm of Ghost.elm_ghosts){
+      elm.setAttribute('data-reverse' , '1')
+    }
+  }
+  static power_off(){
+
+  }
+
 }

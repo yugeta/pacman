@@ -27,6 +27,14 @@ export class Frame{
     return Frame.root.querySelector(`[data-num='${num}']`)
   }
 
+  static get is_weak(){
+    if(Frame.root.getAttribute('data-power') === '1'){
+      return true
+    }
+    else{
+      return false
+    }
+  }
 
   load_asset(){
     const xhr = new XMLHttpRequest()
@@ -92,7 +100,7 @@ export class Frame{
       if(frame_data.match(/^P/i)
       || frame_data.toUpperCase() === 'S5'
       || frame_data.match(/^W/i)
-       || frame_data.match(/^T/i)){
+      || frame_data.match(/^T/i)){
         maps[row_count].push(0)
       }
       // 壁
@@ -113,7 +121,6 @@ export class Frame{
   static is_through(map , direction){
     // if(!map || !Frame.map || !Frame.map[map.y] || !Frame.map[map.y][map.x]){return}
     const through_item = Frame.frame_datas[Frame.get_pos2num(map)]
-    // console.log(direction,through_item)
     if(through_item === 'TU' && direction !== 'up'
     || through_item === 'TD' && direction !== 'down'
     || through_item === 'TL' && direction !== 'left'
@@ -137,6 +144,7 @@ export class Frame{
 
   static is_warp(map){
     const num = Frame.get_pos2num(map)
+    // console.log(num,Frame.frame_datas[num])
     return Frame.frame_datas[num] === 'W1' ? true : false
   }
 

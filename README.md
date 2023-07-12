@@ -10,7 +10,7 @@ Author : Yugeta.Koji
 
 
 # Session
-- 敵キャラを動かします。
+- パワーエサを食べて、敵キャラをweakモードに切り替えます。
 
 # Blog
-- [Javascript: パックマンをHTMLで作ってみるブログ#10 敵キャラ移動](https://blog.myntinc.com/2023/07/javascript-html10.html)
+- [Javascript: パックマンをHTMLで作ってみるブログ#11 パワーエサモード](https://blog.myntinc.com/2023/07/javascript-html11.html)

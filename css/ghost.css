@@ -16,6 +16,7 @@
 .ghost[data-color='3']{--color-body : lightblue;}
 .ghost[data-color='4']{--color-body : pink;}
 .ghost[data-status='weak']{--color-body : blue;}
+.frame-area[data-power='1'] .ghost{--color-body : blue;}
 
 .ghost > *{
   margin : 0 auto;
@@ -26,30 +27,29 @@
   height : calc(var(--size-width) / 2);
   background-color : var(--color-body);
   border-radius    : var(--size-chara) var(--size-chara) 0 0;
-}
-
-.ghost > .face{
-  height : 30%;
-  background-color : var(--color-body);
   position:relative;
 }
-.ghost > .face > .eye-left,
-.ghost > .face > .eye-right{
+.ghost > .head .eyes{
   position:absolute;
-  top:-75%;
-  background-color:white;
+  width:100%;
+  bottom:0;
+  z-index:10;
+}
+.ghost > .head .eyes *{
+  position:absolute;
+  bottom:0%;
   width  : var(--size-eye);
   height : var(--size-eye);
   background-color:white;
   border-radius:50%;
 }
-.ghost > .face .eye-left{
+.ghost > .head .eyes .eye-left{
   left:13%;
 }
-.ghost > .face .eye-right{
+.ghost > .head .eyes .eye-right{
   right:13%;
 }
-.ghost:not([data-status='weak']) > .face > *::before{
+.ghost > .head .eyes *::before{
   content:'';
   display:block;
   background-color:black;
@@ -59,41 +59,74 @@
   border-radius:50%;
   transition-property : margin;
   transition-duration : 0.3s;
+
 }
-.ghost:not([data-status='weak']) > .face[data-direction='right'] > *::before{
+.ghost > .head[data-direction='right'] .eyes{
+  left:12%;
+}
+.ghost > .head[data-direction='left'] .eyes{
+  left:-12%;
+}
+.ghost > .head[data-direction='up'] .eyes{
+  bottom:20%;
+}
+.ghost > .head[data-direction='down'] .eyes{
+  bottom:-20%;
+}
+.frame-area[data-power='1'] .ghost > .head .eyes{
+  left:0;
+  bottom:20%;
+}
+
+.ghost > .head[data-direction='right'] .eyes > *::before{
   margin-left  : 50%;
   margin-right : 0;
 }
-.ghost:not([data-status='weak']) > .face[data-direction='left'] > *::before{
+.ghost > .head[data-direction='left'] .eyes > *::before{
   margin-left  : 0;
   margin-right : 50%;
 }
-.ghost:not([data-status='weak']) > .face[data-direction='up'] > *::before{
+.ghost > .head[data-direction='up'] .eyes > *::before{
   margin-top    : 0;
   margin-bottom : 50%;
 }
-.ghost:not([data-status='weak']) > .face[data-direction='down'] > *::before{
+.ghost > .head[data-direction='down'] .eyes > *::before{
   margin-top    : 50%;
   margin-bottom : 0;
 }
+.frame-area[data-power='1'] .ghost > .head .eyes *::before{
+  display:none;
+}
 
-.ghost[data-status='weak'] > .face > .eye-left,
-.ghost[data-status='weak'] > .face > .eye-right{
+.frame-area[data-power='1'] .ghost > .head .eyes .eye-left,
+.frame-area[data-power='1'] .ghost > .head .eyes .eye-right{
   width  : calc(var(--size-eye) / 2);
   height : calc(var(--size-eye) / 2);
   background-color:white;
   border-radius:50%;
 }
-.ghost[data-status='weak'] > .face > .eye-left{
+.frame-area[data-power='1'] .ghost > .head .eyes .eye-left{
   left:25%;
-} 
-.ghost[data-status='weak'] > .face > .eye-right{
+}
+.frame-area[data-power='1'] .ghost > .head .eyes .eye-right{
   right:25%;
-} 
-.ghost[data-status='weak'] > .face > .mouse{
-  margin-top:10px;
 }
 
+.ghost > .mouse{
+  height : 30%;
+  background-color : var(--color-body);
+  position:relative;
+}
+
+.frame-area .ghost > .mouse > svg{
+  display:none;
+}
+.frame-area[data-power='1'] .ghost > .mouse > svg{
+  position:absolute;
+  top:-60%;
+  display:block;
+  margin-top:10px;
+}
 
 .ghost > .under{
   height : var(--size-under);

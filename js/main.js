@@ -4,7 +4,9 @@ import { Control } from './control.js'
 import { Pacman }  from './pacman.js'
 
 export const Main = {
-  anim_speed : 200
+  anim_speed  : 200,
+  ghost_normal_speed : 200,
+  ghost_weak_speed : 400,
 }
 
 function init(){

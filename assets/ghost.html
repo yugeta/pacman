@@ -1,10 +1,29 @@
-<div class='head'></div>
-<div class='face'>
-  <div class='eye-left'></div>
-  <div class='eye-right'></div>
+<div class='head'>
+  <div class='eyes'>
+    <div class='eye-left'></div>
+    <div class='eye-right'></div>
+  </div>
+</div>
+<div class='mouse'>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10">
+    <path 
+      fill='none' 
+      stroke='white' 
+      stroke-width='4' 
+      d="M 15,7 Q 15,7 17.5,3 T 25,5 35,5 45,5 55,5 65,5 75,5 85,7">
+      <animate 
+        attributeName='d' 
+        dur='800ms' 
+        repeatCount='indefinite'
+        calcMode="linear" 
+        values='M 15,7 Q 15,7 17.5,3 T 25,5 35,5 45,5 55,5 65,5 75,5 85,7;
+                M 15,3 Q 15,3 17.5,7 T 25,5 35,5 45,5 55,5 65,5 75,5 85,3;
+                M 15,7 Q 15,7 17.5,3 T 25,5 35,5 45,5 55,5 65,5 75,5 85,7;' />
+    </path>
+  </svg>
 </div>
 <div class='under'>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30">
+  <svg class='mouse' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30">
     <path fill='red' d="M 0,0 Q 0,15 5,20 T 20,15 40,15 60,15 80,15 100,15 L 100,0" fill='red'>
       <animate 
         attributeName='d' 
