@@ -3,6 +3,20 @@ import { Pacman }    from './pacman.js'
 import { Ghost }     from './ghost.js'
 
 export class Feed{
+
+  constructor(){
+    // Feed.number_of_bites = this.elm_number_of_bites
+    Feed.reset_data()
+  }
+
+  static get elm_number_of_bites(){
+    const elms = document.querySelectorAll(`.frame-area .P1,.frame-area .P2`)
+    return elms.length
+  }
+
+  static reset_data(){
+    Feed.number_of_bites = Feed.elm_number_of_bites
+  }
   
   static move_map(){
     const num  = Frame.get_pos2num(Pacman.coodinates)
@@ -10,13 +24,18 @@ export class Feed{
     switch(item){
       case 'P1':
         this.eat_normal_dot(num)
+        Feed.number_of_bites--
         break
       case 'P2':
         Feed.power_on()
         Feed.flg_soon = setTimeout(Feed.power_soon , 7000)
         Feed.flg_off  = setTimeout(Feed.power_off  , 10000)
         this.eat_big_dot(num)
+        Feed.number_of_bites--
         break
+    }
+    if(Feed.number_of_bites <= 0){
+      Frame.stage_clear()
     }
   }
   

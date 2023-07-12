@@ -220,3 +220,45 @@
   height: calc(var(--block) / 4);
   background-color:pink;
 }
+
+.frame-area[data-status='clear']{
+  animation-name : stage-clear;
+  animation-duration:2s;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+}
+@keyframes stage-clear{
+  0%{
+    --color:blue;
+  }
+  10%{
+    --color:white;
+  }
+  20%{
+    --color:blue;
+  }
+  30%{
+    --color:white;
+  }
+  40%{
+    --color:blue;
+  }
+  50%{
+    --color:white;
+  }
+  60%{
+    --color:blue;
+  }
+  70%{
+    --color:white;
+  }
+  80%{
+    --color:blue;
+  }
+  90%{
+    --color:white;
+  }
+  100%{
+    --color:blue;
+  }
+}

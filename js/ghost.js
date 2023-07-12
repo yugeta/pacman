@@ -4,27 +4,13 @@ import { Pacman } from './pacman.js'
 
 export class Ghost{
   constructor(){
-    this.put_element()
+    this.load_data()
   }
 
-  static datas = [
-    { id : 1,
-      direction : null,
-      coodinate : { x : 12, y : 11 },
-    },
-    { id : 2,
-      direction : null,
-      coodinate : { x : 15, y : 11 },
-    },
-    { id : 3,
-      direction : null,
-      coodinate : { x : 12, y : 14 },
-    },
-    { id : 4,
-      direction : null,
-      coodinate : { x : 15, y : 14 },
-    },
-  ]
+  static reset_data(){
+    Ghost.datas = JSON.parse(Ghost.data_json)
+    Ghost.put_element()
+  }
 
   static get elm_ghosts(){
     return document.querySelectorAll('.ghost')
@@ -44,17 +30,33 @@ export class Ghost{
     return data.coodinate
   }
 
-  put_element(){
+  load_data(){
+    const xhr = new XMLHttpRequest()
+    xhr.open('get' , `assets/ghost.json` , true)
+    xhr.setRequestHeader('Content-Type', 'text/json');
+    xhr.onreadystatechange = ((e) => {
+      if(xhr.readyState !== XMLHttpRequest.DONE){return}
+      if(xhr.status === 404){return}
+      if (xhr.status === 200) {
+        Ghost.data_json = e.target.response
+        Ghost.datas = JSON.parse(Ghost.data_json)
+        Ghost.put_element()
+      }
+    })
+    xhr.send()
+  }
+
+  static put_element(){
     for(const data of Ghost.datas){
       const elm = document.createElement('div')
       elm.className = 'ghost'
       elm.setAttribute('data-color' , data.id)
       Frame.root.appendChild(elm)
     }
-    this.load_asset()
+    Ghost.load_asset()
   }
 
-  load_asset(){
+  static load_asset(){
     const xhr = new XMLHttpRequest()
     xhr.open('get' , `assets/ghost.html` , true)
     xhr.setRequestHeader('Content-Type', 'text/html');
@@ -62,31 +64,32 @@ export class Ghost{
       if(xhr.readyState !== XMLHttpRequest.DONE){return}
       if(xhr.status === 404){return}
       if (xhr.status === 200) {
-        this.asset = e.target.response
-        this.set_ghost()
-        setTimeout(this.set_move.bind(this) , 300)
+        Ghost.asset = e.target.response
+        Ghost.set_ghost()
+        Ghost.set_move()
+        // setTimeout(this.set_move.bind(this) , 300)
       }
-    }).bind(this)
+    })
     xhr.send()
   }
 
-  set_ghost(){
+  static set_ghost(){
     const elm_ghosts = Ghost.elm_ghosts
     for(const elm_ghost of elm_ghosts){
       const coodinate = Ghost.get_coodinate(elm_ghost)
       Frame.put(elm_ghost, coodinate)
-      elm_ghost.innerHTML = this.asset
+      elm_ghost.innerHTML = Ghost.asset
     }
   }
 
-  set_move(){
+  static set_move(){
     const elm_ghosts = Ghost.elm_ghosts
     for(const elm_ghost of elm_ghosts){
-      this.move(elm_ghost)
+      Ghost.move(elm_ghost)
     }
   }
 
-  move(elm_ghost){
+  static move(elm_ghost){
     if(!elm_ghost){return}
     const data       = Ghost.get_data(elm_ghost)
     const coodinate  = Ghost.get_coodinate(elm_ghost)
@@ -95,9 +98,9 @@ export class Ghost{
     const direction  = Ghost.get_direction(elm_ghost, directions)
     const next_pos   = Frame.next_pos(direction , coodinate)
     Ghost.set_direction(elm_ghost , direction)
-    this.moving(elm_ghost , next_pos)
+    Ghost.moving(elm_ghost , next_pos)
   }
-  moving(elm_ghost , next_pos){
+  static moving(elm_ghost , next_pos){
     if(!elm_ghost || !next_pos){return}
     const data = Ghost.get_data(elm_ghost)
     if(!data){return}
@@ -153,9 +156,10 @@ export class Ghost{
     )
 
     Promise.all([elm_ghost.getAnimations().find(e => e.id === id).finished])
-    .then(this.moved.bind(this , elm_ghost))
+    .then(Ghost.moved.bind(this , elm_ghost))
   }
-  moved(elm_ghost , e){
+  static moved(elm_ghost , e){
+    if(!elm_ghost){return}
     const data = Ghost.get_data(elm_ghost)
     
     elm_ghost.style.setProperty('left' , `${data.next_pos.x * Frame.block_size}px` , '')
@@ -188,29 +192,29 @@ export class Ghost{
 
     if(elm_ghost.hasAttribute('data-reverse')){
       elm_ghost.removeAttribute('data-reverse')
-      this.reverse_move(elm_ghost , data)
+      Ghost.reverse_move(elm_ghost , data)
     }
     else{
-      this.next_move(elm_ghost , data)
+      Ghost.next_move(elm_ghost , data)
     }
   }
-  reverse_move(elm_ghost , data){
+  static reverse_move(elm_ghost , data){
     const direction = Ghost.reverse_direction(data.direction)
     Ghost.set_direction(elm_ghost , direction)
     data.direction = direction
     const next_pos = Frame.next_pos(data.direction , data.coodinate)
-    this.moving(elm_ghost , next_pos)
+    Ghost.moving(elm_ghost , next_pos)
   }
-  next_move(elm_ghost , data){
+  static next_move(elm_ghost , data){
     const directions = Ghost.get_enable_directions(data.coodinate , data.direction , Ghost.get_status(elm_ghost))
     const direction  = Ghost.get_direction(elm_ghost, directions)
     Ghost.set_direction(elm_ghost , direction)
     const next_pos = Frame.next_pos(data.direction , data.coodinate)
     if(Frame.is_collision(next_pos)){
-      this.move(elm_ghost)
+      Ghost.move(elm_ghost)
     }
     else{
-      this.moving(elm_ghost , next_pos)
+      Ghost.moving(elm_ghost , next_pos)
     }
   }
 
@@ -341,6 +345,15 @@ export class Ghost{
   static crashed(elm_ghost){
     Main.is_crash = true
     Main.is_dead = true
+    Ghost.move_stop(elm_ghost)
+  }
+
+  static move_stops(){
+    for(const elm_ghost of Ghost.elm_ghosts){
+      Ghost.move_stop(elm_ghost)
+    }
+  }
+  static move_stop(elm_ghost){
     const svg = elm_ghost.querySelector('.under svg')
     svg.pauseAnimations()
     const anim = elm_ghost.getAnimations()

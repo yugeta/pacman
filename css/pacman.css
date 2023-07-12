@@ -6,6 +6,8 @@
   height:var(--size-chara);
 }
 
+.frame-area[data-status='clear'] .pacman::before,
+.frame-area[data-status='clear'] .pacman::after,
 .pacman[data-status='crashed']::before,
 .pacman[data-status='crashed']::after{
   animation-play-state: paused;

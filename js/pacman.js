@@ -7,20 +7,32 @@ import { Ghost }    from './ghost.js'
 export class Pacman{
   // 初期表示座標処理
   constructor(){
-    Pacman.coodinates = this.start_coodinates
-    Frame.put(this.elm, Pacman.coodinates)
-    this.elm.style.setProperty('--anim-speed' , `${Main.anim_speed}ms` , '')
+    Pacman.start()
   }
 
-  get start_coodinates(){
+  static start(){
+    Pacman.create()
+    Pacman.coodinates = Pacman.start_coodinates
+    Frame.put(Pacman.elm, Pacman.coodinates)
+    Pacman.elm.style.setProperty('--anim-speed' , `${Main.anim_speed}ms` , '')
+  }
+  static reset_data(){
+    Pacman.direction = null
+    Pacman.start()
+  }
+
+  static create(){
+    if(Pacman.elm){return}
+    const div = document.createElement('div')
+    div.className = 'pacman'
+    Frame.root.appendChild(div)
+  }
+
+  static get start_coodinates(){
     return {
       x : 14,
       y : 23,
     }
-  }
-
-  get elm(){
-    return Pacman.elm
   }
 
   static get elm(){
@@ -33,12 +45,12 @@ export class Pacman{
     }
     Pacman.direction = direction
     
-    this.elm.setAttribute('data-anim' , "true")
+    Pacman.elm.setAttribute('data-anim' , "true")
     this.moving()
   }
 
   static moving(){
-    if(Main.is_dead){return}
+    if(Main.is_dead || Main.is_clear){return}
     Pacman.next_pos = Frame.next_pos(Pacman.direction , Pacman.coodinates)
     //warp
     if(Frame.is_warp(Pacman.next_pos)){
@@ -47,12 +59,12 @@ export class Pacman{
     }
     if(Frame.is_collision(Pacman.next_pos)
     && !Pacman.is_wall(Pacman.next_pos)){
-      this.elm.setAttribute('data-anim' , "")
+      Pacman.elm.setAttribute('data-anim' , "")
       delete Pacman.direction
       return
     }
-    this.elm.setAttribute('data-direction' , Pacman.direction)
-    this.elm.animate(
+    Pacman.elm.setAttribute('data-direction' , Pacman.direction)
+    Pacman.elm.animate(
       [
         {
           left : `${Pacman.coodinates.x * Frame.block_size}px`,
@@ -67,14 +79,14 @@ export class Pacman{
         duration: Main.anim_speed
       }
     )
-    Promise.all(this.elm.getAnimations().map(e => e.finished)).then(()=>{
+    Promise.all(Pacman.elm.getAnimations().map(e => e.finished)).then(()=>{
       Pacman.moved()
     })
   }
 
   static moved(){
     Pacman.coodinates = Pacman.next_pos
-    Frame.put(this.elm, Pacman.coodinates)
+    Frame.put(Pacman.elm, Pacman.coodinates)
     Feed.move_map()
     
     if(Control.direction && Control.direction !== Pacman.direction){
@@ -101,11 +113,11 @@ export class Pacman{
   }
 
   static is_collision(pos){
-    if(!pos || !Pacman.coodinates || !Pacman.next_pos){return}
-    if(pos.x === Pacman.coodinates.x && pos.y === Pacman.coodinates.y){
+    if(!pos){return}
+    if(Pacman.coodinates && pos.x === Pacman.coodinates.x && pos.y === Pacman.coodinates.y){
       return true
     }
-    else if(pos.x === Pacman.next_pos.x && pos.y === Pacman.next_pos.y){
+    else if(Pacman.next_pos && pos.x === Pacman.next_pos.x && pos.y === Pacman.next_pos.y){
       return true
     }
     else{
@@ -113,12 +125,9 @@ export class Pacman{
     }
   }
 
-  static crashed(elm_ghost){console.log('pacman-dead' , elm_ghost)
+  static crashed(elm_ghost){
     setTimeout(Pacman.dead , 1000)
-    const anim = Pacman.elm.getAnimations()
-    if(anim && anim.length){
-      anim[0].pause()
-    }
+    Pacman.move_stop()
   }
 
   static dead(){
@@ -126,4 +135,20 @@ export class Pacman{
     Pacman.elm.setAttribute('data-direction' , 'up')
     Pacman.elm.setAttribute('data-status' , 'dead')
   }
+
+  static move_stop(){
+    const anim = Pacman.elm.getAnimations()
+    if(anim && anim.length){
+      anim[0].pause()
+    }
+  }
+
+  static hidden(){
+    Pacman.elm.style.setProperty('display','none','')
+  }
+
+  static close_mouse(){
+    // Pacman.elm.setAttribute('data-status' , 'mouse-close')
+  }
+
 }

@@ -1,3 +1,9 @@
+import { Main }    from './main.js'
+import { Pacman }  from './pacman.js'
+import { Ghost }   from './ghost.js'
+import { Feed }    from './feed.js'
+import { Control } from './control.js'
+
 export class Frame{
   constructor(){
     return new Promise(resolve => {
@@ -19,7 +25,7 @@ export class Frame{
     return s5.offsetWidth
   }
 
-  get cols_count(){
+  static get cols_count(){
     return ~~(Frame.root.offsetWidth / Frame.block_size)
   }
 
@@ -38,6 +44,9 @@ export class Frame{
     }
   }
 
+  static get is_clear(){
+    return Frame.root.getAttribute('data-status') === 'clear' ? true : false
+  }
 
   load_asset(){
     const xhr = new XMLHttpRequest()
@@ -47,20 +56,34 @@ export class Frame{
       if(xhr.readyState !== XMLHttpRequest.DONE){return}
       if(xhr.status === 404){return}
       if (xhr.status === 200) {
-        Frame.frame_datas = this.frame_datas = JSON.parse(e.target.response)
-        this.view()
-        this.set_collision()
+        // Frame.frame_datas = this.frame_datas = JSON.parse(e.target.response)
+        // this.view()
+        // this.set_collision()
+        // this.finish()
+        // this.set_ghost_start_area()
+        Frame.asset_json  = e.target.response
+        Frame.start()
         this.finish()
-        this.set_ghost_start_area()
       }
     }).bind(this)
     xhr.send()
   }
 
-  view(){
-    for(let i=0; i<this.frame_datas.length; i++){
+  static start(){
+    Frame.frame_datas = JSON.parse(Frame.asset_json)
+    Frame.view()
+    Frame.set_collision()
+    Frame.set_ghost_start_area()
+  }
+
+  static crear(){
+    Frame.root.innerHTML = ''
+  }
+
+  static view(){
+    for(let i=0; i<Frame.frame_datas.length; i++){
         const p = document.createElement('p')
-        p.className = this.frame_datas[i]
+        p.className = Frame.frame_datas[i]
         Frame.root.appendChild(p)
         p.setAttribute('data-num' , i)
     }
@@ -94,11 +117,11 @@ export class Frame{
   }
 
   // 壁座標に1を設置
-  set_collision(type){
-    const cols_count = this.cols_count
+  static set_collision(type){
+    const cols_count = Frame.cols_count
     const maps = []
     let row_count = 0
-    for(const frame_data of this.frame_datas){
+    for(const frame_data of Frame.frame_datas){
       maps[row_count] = maps[row_count] || []
       // 移動できる
       if(frame_data.match(/^P/i)
@@ -127,6 +150,7 @@ export class Frame{
   static is_through(map , direction, status){
     const through_item = Frame.frame_datas[Frame.get_pos2num(map)]
     if(status === 'dead'){
+      // return true
       if(through_item === 'TU' && direction === 'up'
       || through_item === 'TD' && direction === 'down'
       || through_item === 'TL' && direction === 'left'
@@ -205,13 +229,13 @@ export class Frame{
     return temp_pos
   }
 
-  set_ghost_start_area(){
+  static set_ghost_start_area(){
     const ghost_start_area = []
-    for(let i=0; i<this.frame_datas.length; i++){
-      if(this.frame_datas[i] !== 'TU'
-      && this.frame_datas[i] !== 'TD'
-      && this.frame_datas[i] !== 'TL'
-      && this.frame_datas[i] !== 'TR'){continue}
+    for(let i=0; i<Frame.frame_datas.length; i++){
+      if(Frame.frame_datas[i] !== 'TU'
+      && Frame.frame_datas[i] !== 'TD'
+      && Frame.frame_datas[i] !== 'TL'
+      && Frame.frame_datas[i] !== 'TR'){continue}
       const pos = Frame.get_num2pos(i)
       ghost_start_area.push({
         num : i,
@@ -224,5 +248,31 @@ export class Frame{
     }
 
     Frame.ghost_start_area = pos
+  }
+
+  static stage_clear(){
+    // console.log('stage cleared !!')
+
+    Main.is_clear = true
+
+    // 画面の動きを止める
+    Control.clear()
+    Pacman.move_stop()
+    Pacman.close_mouse()
+    Ghost.move_stops()
+    Ghost.hidden_all()
+    setTimeout((()=>{
+      Frame.root.setAttribute('data-status' , 'clear')
+    }),500)
+
+    setTimeout((()=>{
+      Main.is_clear = false
+      Frame.crear()
+      Frame.root.setAttribute('data-status' , '')
+      Frame.start()
+      Feed.reset_data()
+      Ghost.reset_data()
+      Pacman.reset_data()
+    }),4000)
   }
 }

@@ -13,4 +13,4 @@ Author : Yugeta.Koji
 - 敵とぶつかッタ時の判定を追加します。
 
 # Blog
-- [Javascript: パックマンをHTMLで作ってみるブログ#13 敵キャラdeadモーション](https://blog.myntinc.com/2023/07/javascript-html13-dead.html)
+- [Javascript: パックマンをHTMLで作ってみるブログ#14 ステージクリア処理](https://blog.myntinc.com/2023/07/javascript-html14.html)

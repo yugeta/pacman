@@ -1,0 +1,22 @@
+[
+  {
+    "id"        : 1,
+    "direction" : null,
+    "coodinate" : { "x" : 12, "y" : 11 }
+  },
+  {
+    "id"        : 2,
+    "direction" : null,
+    "coodinate" : { "x" : 15, "y" : 11 }
+  },
+  {
+    "id"        : 3,
+    "direction" : null,
+    "coodinate" : { "x" : 12, "y" : 14 }
+  },
+  {
+    "id"        : 4,
+    "direction" : null,
+    "coodinate" : { "x" : 15, "y" : 14 }
+  }
+]

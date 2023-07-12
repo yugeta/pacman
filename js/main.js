@@ -2,6 +2,7 @@ import { Ghost }   from './ghost.js'
 import { Frame }   from './frame.js'
 import { Control } from './control.js'
 import { Pacman }  from './pacman.js'
+import { Feed }    from './feed.js'
 
 export const Main = {
   anim_speed         : 200,
@@ -10,6 +11,7 @@ export const Main = {
   ghost_dead_speed   : 50,
   is_crash           : false,
   is_dead            : false,
+  is_clear           : false,
 }
 
 function init(){
@@ -17,6 +19,7 @@ function init(){
     new Ghost()
     new Pacman()
     new Control()
+    new Feed()
   })
 }
 
@@ -27,4 +30,5 @@ switch(document.readyState){
     break
   default:
     window.addEventListener('DOMContentLoaded' , (()=>init()))
+
 }
