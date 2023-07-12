@@ -36,7 +36,12 @@ export class Pacman{
   }
 
   static moving(){
-    const next_pos = Pacman.next_pos(Pacman.direction)
+    let next_pos = Pacman.next_pos(Pacman.direction)
+    //warp
+    if(Frame.is_warp(next_pos)){
+      Pacman.coodinates = Frame.get_another_warp_pos(next_pos)
+      next_pos = Pacman.next_pos(Pacman.direction)
+    }
     if(Frame.is_collision(next_pos)){
       this.elm.setAttribute('data-anim' , "")
       delete Pacman.direction
@@ -98,4 +103,5 @@ export class Pacman{
     }
     return next_pos
   }
+
 }

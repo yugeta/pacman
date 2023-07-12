@@ -100,4 +100,36 @@ export class Frame{
   static is_collision(map){
     return Frame.map[map.y][map.x]
   }
+
+  static get_pos2num(pos){
+    return pos.y * Frame.map[0].length + pos.x
+  }
+  static get_num2pos(num){
+    return {
+      x : num % Frame.map[0].length,
+      y : ~~(num / Frame.map[0].length),
+    }
+  }
+  
+  static is_warp(map){
+    const num = Frame.get_pos2num(map)
+    return Frame.frame_datas[num] === 'W1' ? true : false
+  }
+  
+  static get_another_warp_pos(map){
+    const warp_index_arr = Frame.filterIndex(Frame.frame_datas , 'W1')
+    const current_index = Frame.get_pos2num(map)
+    const another_num = warp_index_arr.find(e => e !== current_index)
+    return Frame.get_num2pos(another_num)
+  }
+  
+  static filterIndex(datas,target){
+    const res_arr = []
+    for(let i=0; i<datas.length; i++){
+      if(datas[i] === target){
+        res_arr.push(i)
+      }
+    }
+    return res_arr
+  }
 }
