@@ -1,11 +1,10 @@
 .ghost{
-  --size-chara : 80px;
+  display:inline-block;
   --size-width : calc(var(--size-chara) * 1.0);
   --size-eye   : calc(var(--size-width) * 0.3);
   --size-under : calc(var(--size-width) * 0.2);
   --color-body : red;
 
-  margin:50px;
   width:var(--size-chara);
   height:var(--size-chara);
 }
@@ -34,7 +33,7 @@
 .ghost > .face > .eye-left,
 .ghost > .face > .eye-right{
   position:absolute;
-  top:-15px;
+  top:-75%;
   background-color:white;
   width  : var(--size-eye);
   height : var(--size-eye);

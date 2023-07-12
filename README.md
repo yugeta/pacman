@@ -10,8 +10,8 @@ Author : Yugeta.Koji
 
 
 # Session
-- キャラクターができたので、今回はステージのパーツを作ってみたいと思います。
-
+- ステージにエサをばらまいてみます。
+- これまでのファイルを一掃して、フォルダ分けして組み直しました。
 
 # Blog
-- [css + svg: パックマンをHTMLで作ってみるブログ#4 壁の作成](https://blog.myntinc.com/2023/04/css-svg-4.html)
+- [HTML + CSS + Javascript: パックマンをHTMLで作ってみるブログ#5 エサ表示と構造化](https://blog.myntinc.com/2023/06/html-css-javascript-html5.html)

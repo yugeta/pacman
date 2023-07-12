@@ -1,7 +1,6 @@
 .pacman{
-  --size-chara : 80px;
-
-  position:absolute;
+  /* position:absolute; */
+  display:inline-block;
   top:100px;
   left:100px;
   width:var(--size-chara);

@@ -1,0 +1,7 @@
+@import 'frame.css';
+@import 'pacman.css';
+@import 'ghost.css';
+
+:root{
+  --size-chara : 32px;
+}
