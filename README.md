@@ -10,8 +10,10 @@ Author : Yugeta.Koji
 
 
 # Session
-- 初回は、自キャラ（パックマン）をHTML+CSSで作ります。
+- ２回めは、敵キャラ(Ghost)の作成です。
+- 波箇所は、簡易にsvgを使って作っています。
+- path-mask機能を使えば作れそうですが、そのうちに切り替えたいと思います。
 
 
 # Blog
-- [css パックマンのキャラアニメーション#1 キャラクター作成](https://blog.myntinc.com/2023/04/css-1.html)
+- [css + svg: パックマンのキャラアニメーション#2](https://blog.myntinc.com/2023/04/css-svg-2.html)
