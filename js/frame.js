@@ -23,6 +23,10 @@ export class Frame{
     return ~~(Frame.root.offsetWidth / Frame.block_size)
   }
 
+  static get_elm(num){
+    return Frame.root.querySelector(`[data-num='${num}']`)
+  }
+
   load_asset(){
     const xhr = new XMLHttpRequest()
     xhr.open('get' , `assets/frame.json` , true)
@@ -45,6 +49,7 @@ export class Frame{
         const p = document.createElement('p')
         p.className = this.frame_datas[i]
         Frame.root.appendChild(p)
+        p.setAttribute('data-num' , i)
     }
   }
 

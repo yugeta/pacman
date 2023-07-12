@@ -1,5 +1,6 @@
 import { Frame }    from './frame.js'
 import { Control }  from './control.js'
+import { Feed }     from './feed.js'
 
 export class Pacman{
   // 初期表示座標処理
@@ -71,6 +72,7 @@ export class Pacman{
   static moved(next_pos){
     Pacman.coodinates = next_pos
     Frame.put(this.elm, Pacman.coodinates)
+    Feed.move_map()
     
     if(Control.direction && Control.direction !== Pacman.direction){
       const temp_pos = Pacman.next_pos(Control.direction)

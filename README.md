@@ -10,7 +10,7 @@ Author : Yugeta.Koji
 
 
 # Session
-- ワープ機能を実装
+- 自キャラの移動に伴ってエサを食べるモード
 
 # Blog
-- [Javascript: パックマンをHTMLで作ってみるブログ#8 ワープ機能](https://blog.myntinc.com/2023/06/javascript-html8.html)
+- [Javascript: パックマンをHTMLで作ってみるブログ#9 エサを食べるモード](https://blog.myntinc.com/2023/07/javascript-html9.html)
