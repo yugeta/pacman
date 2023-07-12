@@ -10,8 +10,7 @@ Author : Yugeta.Koji
 
 
 # Session
-- ステージにエサをばらまいてみます。
-- これまでのファイルを一掃して、フォルダ分けして組み直しました。
+- カーソルで自キャラを動かします。
 
 # Blog
-- [HTML + CSS + Javascript: パックマンをHTMLで作ってみるブログ#5 エサ表示と構造化](https://blog.myntinc.com/2023/06/html-css-javascript-html5.html)
+- [HTML + CSS + Javascript: パックマンをHTMLで作ってみるブログ#6 自機コントロール](https://blog.myntinc.com/2023/06/html-css-javascript-html6.html)

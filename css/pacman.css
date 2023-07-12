@@ -1,8 +1,6 @@
 .pacman{
-  /* position:absolute; */
+  position:absolute;
   display:inline-block;
-  top:100px;
-  left:100px;
   width:var(--size-chara);
   height:var(--size-chara);
 }
@@ -52,4 +50,18 @@
   100%{
     transform:rotate(-45deg);
   }
+}
+
+.pacman,
+.pacman[data-direction="left"]{
+  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2));
+}
+.pacman[data-direction="right"]{
+  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2)) scaleX(-1);
+}
+.pacman[data-direction="up"]{
+  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2)) rotate(90deg);
+}
+.pacman[data-direction="down"]{
+  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2)) rotate(-90deg);
 }

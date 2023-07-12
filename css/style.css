@@ -3,5 +3,6 @@
 @import 'ghost.css';
 
 :root{
+  --block  : 16px;
   --size-chara : 32px;
 }

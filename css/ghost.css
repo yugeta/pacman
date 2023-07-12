@@ -98,3 +98,17 @@
 .ghost > .under path{
   fill:var(--color-body);
 }
+
+.ghost{
+  position:absolute;
+  z-index:9;
+  display:inline-block;
+  --size-width : calc(var(--size-chara) * 1.0);
+  --size-eye   : calc(var(--size-width) * 0.3);
+  --size-under : calc(var(--size-width) * 0.2);
+  --color-body : red;
+
+  width:var(--size-chara);
+  height:var(--size-chara);
+  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2));
+}

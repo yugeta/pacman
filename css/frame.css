@@ -1,18 +1,18 @@
 :root{
   --color  : blue;
-  --block  : 16px;
   --border : 2px;
 }
 
 .frame-area{
- display:inline-grid;
- grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  position:relative;
+  display:inline-grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 .frame-area,
-.frame-area *,
-.frame-area *::before,
-.frame-area *::after{
+.frame-area p,
+.frame-area p::before,
+.frame-area p::after{
   font-size:0;
   -webkit-box-sizing : border-box;
      -moz-box-sizing : border-box;
@@ -20,7 +20,7 @@
       -ms-box-sizing : border-box;
           box-sizing : border-box;
 }
-.frame-area > *{
+.frame-area > p{
   width     : var(--block);
   height    : var(--block);
   font-size : 0;
@@ -52,8 +52,8 @@
   border-color  : var(--color);
 }
 
-.frame-area > *::before,
-.frame-area > *::after{
+.frame-area > p::before,
+.frame-area > p::after{
   content      : '';
   font-size    : 0;
   display      : block;
@@ -148,8 +148,7 @@
   border-right-width  : var(--border);
   border-bottom-right-radius : 100%;
 }
-
-
+  
 .frame-area .D1::after{
   border-width  : var(--border) 0 0 var(--border);
   border-radius : 100% 0 0 0;
