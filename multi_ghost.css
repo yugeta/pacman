@@ -1,0 +1,101 @@
+.ghost{
+  --size-chara : 80px;
+  --size-width : calc(var(--size-chara) * 1.0);
+  --size-eye   : calc(var(--size-width) * 0.3);
+  --size-under : calc(var(--size-width) * 0.2);
+  --color-body : red;
+
+  margin:50px;
+  width:var(--size-chara);
+  height:var(--size-chara);
+}
+.ghost[data-color='1']{--color-body : red;}
+.ghost[data-color='2']{--color-body : orange;}
+.ghost[data-color='3']{--color-body : lightblue;}
+.ghost[data-color='4']{--color-body : pink;}
+.ghost[data-status='weak']{--color-body : blue;}
+
+.ghost > *{
+  margin : 0 auto;
+  width  : var(--size-width);
+}
+
+.ghost > .head{
+  height : calc(var(--size-width) / 2);
+  background-color : var(--color-body);
+  border-radius    : var(--size-chara) var(--size-chara) 0 0;
+}
+
+.ghost > .face{
+  height : 30%;
+  background-color : var(--color-body);
+  position:relative;
+}
+.ghost > .face > .eye-left,
+.ghost > .face > .eye-right{
+  position:absolute;
+  top:-15px;
+  background-color:white;
+  width  : var(--size-eye);
+  height : var(--size-eye);
+  background-color:white;
+  border-radius:50%;
+}
+.ghost > .face .eye-left{
+  left:13%;
+}
+.ghost > .face .eye-right{
+  right:13%;
+}
+.ghost:not([data-status='weak']) > .face > *::before{
+  content:'';
+  display:block;
+  background-color:black;
+  width  : 50%;
+  height : 50%;
+  margin : 25%;
+  border-radius:50%;
+  transition-property : margin;
+  transition-duration : 0.3s;
+}
+.ghost:not([data-status='weak']) > .face[data-direction='right'] > *::before{
+  margin-left  : 50%;
+  margin-right : 0;
+}
+.ghost:not([data-status='weak']) > .face[data-direction='left'] > *::before{
+  margin-left  : 0;
+  margin-right : 50%;
+}
+.ghost:not([data-status='weak']) > .face[data-direction='top'] > *::before{
+  margin-top    : 0;
+  margin-bottom : 50%;
+}
+.ghost:not([data-status='weak']) > .face[data-direction='bottom'] > *::before{
+  margin-top    : 50%;
+  margin-bottom : 0;
+}
+
+.ghost[data-status='weak'] > .face > .eye-left,
+.ghost[data-status='weak'] > .face > .eye-right{
+  width  : calc(var(--size-eye) / 2);
+  height : calc(var(--size-eye) / 2);
+  background-color:white;
+  border-radius:50%;
+}
+.ghost[data-status='weak'] > .face > .eye-left{
+  left:25%;
+} 
+.ghost[data-status='weak'] > .face > .eye-right{
+  right:25%;
+} 
+.ghost[data-status='weak'] > .face > .mouse{
+  margin-top:10px;
+}
+
+
+.ghost > .under{
+  height : var(--size-under);
+}
+.ghost > .under path{
+  fill:var(--color-body);
+}
