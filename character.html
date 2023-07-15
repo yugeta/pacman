@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0" name="viewport">
+    <link rel='stylesheet' href='css/pacman.css' />
+    <link rel='stylesheet' href='css/ghost.css' />
+    <style>
+    :root{
+      --block:16px;
+      --size-chara:calc(var(--block) * 2);
+      --anim-speed:1s;
+    }
+    body{
+      background-color:black;
+      width:100%;
+      overflow:hidden;
+    }
+
+    .frame-area,
+    .frame-area p,
+    .frame-area p::before,
+    .frame-area p::after{
+      font-size:0;
+      -webkit-box-sizing : border-box;
+        -moz-box-sizing : border-box;
+          -o-box-sizing : border-box;
+          -ms-box-sizing : border-box;
+              box-sizing : border-box;
+    }
+
+    .frame-area{
+      position:relative;
+      transform:scale(2.0);
+      transform-origin:top left;
+    }
+    .frame-area > *{
+      position:absolute;
+    }
+
+    #pacman{
+      top:10px;
+      left:10px;
+    }
+    #ghost_1{
+      top:50px;
+      left:10px;
+    }
+
+    #ghost_2{
+      top:90px;
+      left:10px;
+    }
+    #ghost_3{
+      top:130px;
+      left:10px;
+    }
+    #ghost_4{
+      top:170px;
+      left:10px;
+    }
+    #ghost_5{
+      top:210px;
+      left:10px;
+    }
+    #ghost_6{
+      top:250px;
+      left:10px;
+    }
+
+    </style>
+</head>
+<body>
+
+<div class='frame-area'>
+  <div id='pacman' class='pacman' data-status="anim" data-direction="top"></div>
+
+  <div id='ghost_1' class='ghost' data-color="1" data-direction="left">
+    <div class='eye-l'></div>
+    <div class='eye-r'></div>
+    <div class='mouse'></div>
+  </div>
+
+  <div id='ghost_2' class='ghost' data-color="2" data-direction="right">
+    <div class='eye-l'></div>
+    <div class='eye-r'></div>
+    <div class='mouse'></div>
+  </div>
+  <div id='ghost_3' class='ghost' data-color="3" data-direction="up">
+    <div class='eye-l'></div>
+    <div class='eye-r'></div>
+    <div class='mouse'></div>
+  </div>
+  <div id='ghost_4' class='ghost' data-color="4" data-direction="down">
+    <div class='eye-l'></div>
+    <div class='eye-r'></div>
+    <div class='mouse'></div>
+  </div>
+  <div id='ghost_5' class='ghost' data-color="1" data-direction="left" data-status="weak">
+    <div class='eye-l'></div>
+    <div class='eye-r'></div>
+    <div class='mouse'></div>
+  </div>
+  <div id='ghost_6' class='ghost' data-color="1" data-direction="left" data-status="dead">
+    <div class='eye-l'></div>
+    <div class='eye-r'></div>
+    <div class='mouse'></div>
+  </div>
+</div>
+
+<script>
+const elm = document.querySelector('.pacman')
+elm.addEventListener('click' , ((e)=>{
+  switch(e.currentTarget.getAttribute('data-status')){
+    case 'dead':
+      e.currentTarget.setAttribute('data-status' , 'anim')
+      break
+
+    default:
+      e.currentTarget.setAttribute('data-status' , 'dead')
+      break
+  }
+}))
+</script>
+
+</body>
+</html>

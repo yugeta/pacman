@@ -47,7 +47,7 @@ export class Pacman{
     }
     Pacman.direction = direction
     
-    Pacman.elm.setAttribute('data-anim' , "true")
+    Pacman.elm.setAttribute('data-status' , "anim")
     this.moving()
   }
 
@@ -61,7 +61,7 @@ export class Pacman{
     }
     if(Frame.is_collision(Pacman.next_pos)
     && !Pacman.is_wall(Pacman.next_pos)){
-      Pacman.elm.setAttribute('data-anim' , "")
+      Pacman.elm.setAttribute('data-status' , "")
       delete Pacman.direction
       return
     }
@@ -128,7 +128,7 @@ export class Pacman{
   }
 
   static crashed(elm_ghost){
-    Pacman.elm.setAttribute('data-anim' , '')
+    // Pacman.elm.setAttribute('data-anim' , '')
     setTimeout(Pacman.dead , 1000)
   }
 
@@ -141,7 +141,7 @@ export class Pacman{
   static move_stop(){
     const anim = Pacman.elm.getAnimations()
     if(anim && anim.length){
-      console.log(anim.length)
+      // console.log(anim.length)
       anim[0].pause()
     }
     else{

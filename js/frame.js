@@ -4,6 +4,7 @@ import { Ghost }   from './ghost.js'
 import { Feed }    from './feed.js'
 import { Control } from './control.js'
 import { Footer }  from './footer.js'
+import { Mobile }  from './mobile.js'
 
 export class Frame{
   constructor(){
@@ -16,8 +17,9 @@ export class Frame{
   }
 
   static get block_size(){
-    const s5 = document.querySelector('.S5')
-    return s5.offsetWidth
+    // const s5 = document.querySelector('.S5')
+    // return s5.offsetWidth
+    return Mobile.block_size
   }
 
   static get cols_count(){

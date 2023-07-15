@@ -2,8 +2,9 @@
 @import 'pacman.css';
 @import 'ghost.css';
 @import 'footer.css';
+@import 'mobile.css';
 
 :root{
   --block  : 16px;
-  --size-chara : 32px;
+  --size-chara : calc(var(--block) * 2);
 }
