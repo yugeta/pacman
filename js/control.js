@@ -21,20 +21,20 @@ export class Control{
     if(Frame.is_clear){return}
     const key  = e.keyCode
     
-    const name = Control.key2name(key)
-    if(!name){return}
-    Control.direction = name
+    const direction = Control.key2name(key)
+    if(!direction){return}
+    Control.direction = direction
     Pacman.move(Control.direction)
   }
 
   static keyup(e){
     if(!Control.direction){return}
-    const name = Control.key2name(e.keyCode)
+    const direction = Control.key2name(e.keyCode)
     Control.clear()
   }
 
   static clear(){
-    if(Control.direction !== name){return}
+    if(!Control.direction){return}
     delete Control.direction
   }
 }
