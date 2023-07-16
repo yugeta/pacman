@@ -1,5 +1,6 @@
 import { Pacman } from './pacman.js'
 import { Frame }  from './frame.js'
+import { Mobile } from './mobile.js'
 
 export class Control{
   constructor(){
@@ -29,8 +30,7 @@ export class Control{
 
   static keyup(e){
     if(!Control.direction){return}
-    const direction = Control.key2name(e.keyCode)
-    Control.clear()
+    // Control.clear()
   }
 
   static clear(){

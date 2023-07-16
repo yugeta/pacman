@@ -115,9 +115,9 @@ export class Mobile{
     return null
   }
 
-  static view_memo(){
+  static view_memo(str){
     // console.log(Mobile.elm_memo,Mobile.touch_datas.direction)
-    Mobile.elm_memo.textContent = Control.direction || ''
+    Mobile.elm_memo.textContent = str || Control.direction || ''
   }
 
   static pacman_move(direction){

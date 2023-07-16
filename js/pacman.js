@@ -4,6 +4,7 @@ import { Control }  from './control.js'
 import { Feed }     from './feed.js'
 import { Ghost }    from './ghost.js'
 import { Footer }   from './footer.js'
+import { Mobile }   from './mobile.js'
 
 export class Pacman{
 
@@ -19,7 +20,7 @@ export class Pacman{
 
   static start(){
     if(!Control.direction){return}
-    Pacman.move(Control.direction)
+    Pacman.move()
   }
 
   static create(){
@@ -40,13 +41,12 @@ export class Pacman{
     return document.querySelector('.frame-area .pacman')
   }
 
-  static move(direction){
+  static move(){
     if(Frame.is_ready){return}
     if(Pacman.direction){
       return
     }
-    Pacman.direction = direction
-    
+    Pacman.direction = Control.direction
     Pacman.elm.setAttribute('data-status' , "anim")
     this.moving()
   }
@@ -90,7 +90,6 @@ export class Pacman{
     Pacman.coodinates = Pacman.next_pos
     Frame.put(Pacman.elm, Pacman.coodinates)
     Feed.move_map()
-    
     if(Control.direction && Control.direction !== Pacman.direction){
       const temp_pos = Frame.next_pos(Control.direction , Pacman.coodinates)
       if(!Frame.is_collision(temp_pos)
@@ -128,7 +127,6 @@ export class Pacman{
   }
 
   static crashed(elm_ghost){
-    // Pacman.elm.setAttribute('data-anim' , '')
     setTimeout(Pacman.dead , 1000)
   }
 
@@ -141,7 +139,6 @@ export class Pacman{
   static move_stop(){
     const anim = Pacman.elm.getAnimations()
     if(anim && anim.length){
-      // console.log(anim.length)
       anim[0].pause()
     }
     else{
