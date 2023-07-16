@@ -1,6 +1,5 @@
 import { Pacman } from './pacman.js'
 import { Frame }  from './frame.js'
-import { Mobile } from './mobile.js'
 
 export class Control{
   constructor(){

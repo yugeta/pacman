@@ -80,6 +80,32 @@
 .ghost[data-direction='down'] .eye-r{
   top:16px;
 }
+
+.ghost[data-direction='left'] .eye-l::before,
+.ghost[data-direction='left'] .eye-r::before{
+  left:0;
+  right:auto;
+  transform:translate(0,-50%);
+}
+.ghost[data-direction='right'] .eye-l::before,
+.ghost[data-direction='right'] .eye-r::before{
+  left:auto;
+  right:0;
+  transform:translate(0,-50%);
+}
+.ghost[data-direction='up'] .eye-l::before,
+.ghost[data-direction='up'] .eye-r::before{
+  top:0;
+  bottom:auto;
+  transform:translate(-50%,0);
+}
+.ghost[data-direction='down'] .eye-l::before,
+.ghost[data-direction='down'] .eye-r::before{
+  top:auto;
+  bottom:0;
+  transform:translate(-50%,0);
+}
+
 .ghost[data-status='weak'] .eye-l{
   top:8px;
   left:8px;

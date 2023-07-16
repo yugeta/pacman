@@ -4,7 +4,6 @@ import { Control }  from './control.js'
 import { Feed }     from './feed.js'
 import { Ghost }    from './ghost.js'
 import { Footer }   from './footer.js'
-import { Mobile }   from './mobile.js'
 
 export class Pacman{
 
