@@ -7,4 +7,5 @@
 :root{
   --block  : 16px;
   --size-chara : calc(var(--block) * 2);
+  color:white;
 }
