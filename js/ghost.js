@@ -299,9 +299,10 @@ export class Ghost{
   static set_direction(elm_ghost , direction){
     const data     = Ghost.get_data(elm_ghost)
     data.direction = direction
-    const head     = elm_ghost.querySelector('.head')
-    if(!head){return}
-    head.setAttribute('data-direction' , direction)
+    // const head     = elm_ghost.querySelector('.head')
+    // if(!head){return}
+    // head.setAttribute('data-direction' , direction)
+    elm_ghost.setAttribute('data-direction' , direction)
   }
 
   static power_on(){
@@ -333,8 +334,8 @@ export class Ghost{
     }
   }
   static move_stop(elm_ghost){
-    const svg = elm_ghost.querySelector('.under svg')
-    svg.pauseAnimations()
+    // const svg = elm_ghost.querySelector('.under svg')
+    // svg.pauseAnimations()
     const anim = elm_ghost.getAnimations()
     if(anim && anim.length){
       anim[0].pause()

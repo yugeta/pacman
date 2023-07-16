@@ -1,85 +1,94 @@
 .pacman{
-  position:absolute;
-  z-index:10;
-  display:inline-block;
-  width:var(--size-chara);
-  height:var(--size-chara);
+  position : absolute;
+  z-index  : 10;
+  display  : inline-block;
+  width    : var(--size-chara);
+  height   : var(--size-chara);
 }
-
-.frame-area[data-status='clear'] .pacman::before,
-.frame-area[data-status='clear'] .pacman::after,
-.pacman[data-status='crashed']::before,
-.pacman[data-status='crashed']::after{
-  animation-play-state: paused;
-}
-
-.pacman::before,
-.pacman::after{
+.pacman::before{
   content:'';
-  display:block;
-  width:100%;
-  height:50%;
-  background-color:yellow;
+  background-color : yellow;
+  display : block;
+  width   : 100%;
+  height  : 100%;
+  border-radius : 50%;
+}
+
+/* パクパク処理 */
+.pacman[data-status="anim"]::before{
+  animation-name : pacman_anim;
   animation-duration:var(--anim-speed);
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
-.pacman::before{
-  transform-origin:center bottom;
-  border-radius:var(--size-chara) var(--size-chara) 0 0;
-  transform:rotate(45deg);
-}
-.pacman::after{
-  transform-origin:center top;
-  border-radius:0 0 var(--size-chara) var(--size-chara);
-  transform:rotate(-45deg);
-}
-.pacman[data-anim="true"]::before{
-  animation-name : pacman_before;
-}
-.pacman[data-anim="true"]::after{
-  animation-name : pacman_after;
-}
-
-@keyframes pacman_before{
+@keyframes pacman_anim{
   0%{
-    transform:rotate(45deg);
+    clip-path: polygon(
+       50%  60%, 
+       50%   0%, 
+      100%   0%,
+      100% 100%,
+        0% 100%,
+        0%   0%,
+       50%   0%,
+       50%  60%
+    );
   }
   50%{
-    transform:rotate(0deg);
+    clip-path: polygon(
+       50%  60%, 
+      100%   0%, 
+      100%   0%,
+      100% 100%,
+        0% 100%,
+        0%   0%,
+        0%   0%,
+       50%  60%
+    );
   }
   100%{
-    transform:rotate(45deg);
-  }
-}
-@keyframes pacman_after{
-  0%{
-    transform:rotate(-45deg);
-  }
-  50%{
-    transform:rotate(0deg);
-  }
-  100%{
-    transform:rotate(-45deg);
+    clip-path: polygon(
+       50%  60%, 
+       50%   0%, 
+      100%   0%,
+      100% 100%,
+        0% 100%,
+        0%   0%,
+       50%   0%,
+       50%  60%
+    );
   }
 }
 
-.pacman,
-.pacman[data-direction="left"]{
-  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2));
-}
-.pacman[data-direction="right"]{
-  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2)) scaleX(-1);
-}
-.pacman[data-direction="up"]{
-  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2)) rotate(90deg);
-}
-.pacman[data-direction="down"]{
-  transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2)) rotate(-90deg);
+/* ステージ座標とのズレ解消用処理 */
+.pacman{
+  transform : translate(calc(var(--block) / -2) , calc(var(--block) / -2));
 }
 
-.pacman[data-status="dead"]::before,
-.pacman[data-status="dead"]::after{
+.pacman::before,
+.pacman[data-direction="left"]::before{
+  transform: rotate(-90deg);
+}
+.pacman[data-direction="right"]::before{
+  transform:rotate(90deg);
+}
+.pacman[data-direction="up"]::before{
+  transform: rotate(0deg);
+}
+.pacman[data-direction="down"]::before{
+  transform: scaleY(-1);
+}
+
+
+/* 動き停止 */
+.frame-area[data-status='clear'] .pacman,
+.pacman[data-status='crashed']{
+  animation-play-state: paused;
+}
+
+/* Dead処理 */
+.pacman[data-status="dead"]::before{
+  animation-name : pacman-dead;
   transform:rotate(0deg);
   animation-delay : 0.0s;
   animation-direction : normal;
@@ -88,88 +97,55 @@
   animation-iteration-count: 1;
   animation-timing-function: linear;
 }
-.pacman[data-status="dead"]::before{
-  animation-name : pacman-dead-before;
-}
-.pacman[data-status="dead"]::after{
-  animation-name : pacman-dead-after;
+@keyframes pacman-dead{
+  0%{
+    clip-path: polygon(
+       50%  50%, 
+       50%   0%, 
+      100%   0%,
+      100% 100%,
+        0% 100%,
+        0%   0%,
+       50%   0%,
+       50%  50%
+    );
+  }
+  25%{
+    clip-path: polygon(
+       50%  50%, 
+      100%   0%, 
+      100%   0%,
+      100% 100%,
+        0% 100%,
+        0%   0%,
+        0%   0%,
+       50%  50%
+    );
+  }
+  75%{
+    clip-path: polygon(
+       50%  50%, 
+      100% 100%, 
+      100% 100%,
+      100% 100%,
+        0% 100%,
+        0% 100%,
+        0% 100%,
+       50%  50%
+    );
+  }
+  
+  100%{
+    clip-path: polygon(
+       50%  50%, 
+       50% 100%, 
+       50% 100%,
+       50% 100%,
+       50% 100%,
+       50% 100%,
+       50% 100%,
+       50%  50%
+    );
+  }
 }
 
-@keyframes pacman-dead-before{
-  0%{
-    clip-path: polygon(
-       50% 100%, 
-        0% 100%, 
-        0% 0%,
-      100% 0%,
-      100% 100%
-    );
-  }
-  25%{
-    clip-path: polygon(
-      50% 100%, 
-      0% 0%, 
-      0% 0%, 
-      100% 0%,
-      100% 100%
-    );
-  }
-  75%{
-    clip-path: polygon(
-       50% 100%, 
-      100% 0%, 
-      100% 0%,
-      100% 0%,
-      100% 100%
-    );
-  }
-  
-  100%{
-    clip-path: polygon(
-      50% 100%, 
-      100% 100%, 
-      100% 100%, 
-      100% 100%, 
-      100% 100% 
-    );
-  }
-}
-@keyframes pacman-dead-after{
-  0%{
-    clip-path: polygon(
-       50% 0%, 
-        0% 0%, 
-        0% 100%,
-      100% 100%,
-      100% 0%
-    );
-  }
-  25%{
-    clip-path: polygon(
-      50% 0%, 
-      0% 100%, 
-      0% 100%, 
-      100% 100%,
-      100% 0%
-    );
-  }
-  75%{
-    clip-path: polygon(
-       50% 0%, 
-      100% 100%, 
-      100% 100%,
-      100% 100%,
-      100% 0%
-    );
-  }
-  
-  100%{
-    clip-path: polygon(
-      50% 0%, 
-      100% 0%, 
-      100% 0%, 
-      100% 0%, 
-      100% 0% 
-    );
-  }
-}

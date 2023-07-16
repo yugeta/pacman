@@ -8,3 +8,8 @@
   margin:10px 5px;
   display:inline-block;
 }
+
+.frame-footer .memo{
+  color:white;
+  display:none;
+}

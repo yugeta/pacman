@@ -1,201 +1,112 @@
 .ghost{
-  position:absolute;
-  z-index:9;
-  display:inline-block;
-  --size-width : calc(var(--size-chara) * 1.0);
-  --size-eye   : calc(var(--size-width) * 0.3);
-  --size-under : calc(var(--size-width) * 0.2);
-  --color-body : red;
-
-  width:var(--size-chara);
-  height:var(--size-chara);
+  position : absolute;
+  z-index  : 10;
+  display  : inline-block;
+  width    : 32px;
+  height   : 32px;
   transform:translate(calc(var(--block) / -2) , calc(var(--block) / -2));
 }
-.ghost[data-color='1']{--color-body : red;}
-.ghost[data-color='2']{--color-body : orange;}
-.ghost[data-color='3']{--color-body : lightblue;}
-.ghost[data-color='4']{--color-body : pink;}
-.ghost[data-status='weak']{--color-body : blue;}
-
-.ghost > *{
-  margin : 0 auto;
-  width  : var(--size-width);
-}
-
-.ghost > .head{
-  height : calc(var(--size-width) / 2);
-  background-color : var(--color-body);
-  border-radius    : var(--size-chara) var(--size-chara) 0 0;
-  position:relative;
-}
-.ghost > .head .eyes{
-  position:absolute;
-  width:100%;
-  bottom:0;
-  z-index:10;
-}
-.ghost > .head .eyes *{
-  position:absolute;
-  bottom:0%;
-  width  : var(--size-eye);
-  height : var(--size-eye);
-  background-color:white;
-  border-radius:50%;
-}
-.ghost > .head .eyes .eye-left{
-  left:13%;
-}
-.ghost > .head .eyes .eye-right{
-  right:13%;
-}
-.ghost > .head .eyes *::before{
+.ghost::before{
   content:'';
-  display:block;
-  background-color:black;
-  width  : 50%;
-  height : 50%;
-  margin : 25%;
-  border-radius:50%;
-  transition-property : margin;
-  transition-duration : 0.3s;
-
-}
-.ghost > .head[data-direction='right'] .eyes{
-  left:12%;
-}
-.ghost > .head[data-direction='left'] .eyes{
-  left:-12%;
-}
-.ghost > .head[data-direction='up'] .eyes{
-  bottom:20%;
-}
-.ghost > .head[data-direction='down'] .eyes{
-  bottom:-20%;
-}
-.ghost[data-status='weak'] > .head .eyes{
-  left:0;
-  bottom:20%;
-}
-
-.ghost > .head[data-direction='right'] .eyes > *::before{
-  margin-left  : 50%;
-  margin-right : 0;
-}
-.ghost > .head[data-direction='left'] .eyes > *::before{
-  margin-left  : 0;
-  margin-right : 50%;
-}
-.ghost > .head[data-direction='up'] .eyes > *::before{
-  margin-top    : 0;
-  margin-bottom : 50%;
-}
-.ghost > .head[data-direction='down'] .eyes > *::before{
-  margin-top    : 50%;
-  margin-bottom : 0;
-}
-.ghost[data-status='weak'] > .head .eyes *::before{
-  display:none;
-}
-
-.ghost[data-status='weak'] > .head .eyes .eye-left,
-.ghost[data-status='weak'] > .head .eyes .eye-right{
-  width  : calc(var(--size-eye) / 2);
-  height : calc(var(--size-eye) / 2);
-  background-color:white;
-  border-radius:50%;
-}
-.ghost[data-status='weak'] > .head .eyes .eye-left{
-  left:25%;
-}
-.ghost[data-status='weak'] > .head .eyes .eye-right{
-  right:25%;
-}
-
-
-.ghost > .mouse{
-  height : 30%;
-  background-color : var(--color-body);
-  position:relative;
-}
-
-.frame-area .ghost > .mouse > svg{
-  display:none;
-}
-.ghost[data-status='weak'] > .mouse > svg{
   position:absolute;
-  top:-60%;
-  display:block;
-  margin-top:10px;
+  
+  display : block;
+  width   : 100%;
+  height  : 100%;
+  clip-path : path('M 0,24 Q 0,0 16,0 Q 32,0 32,24 L 32,30  Q 30,34 26,30 Q 23,26 19,30 Q 16,34 12,30 Q 10,26 6,30 Q 2,34 0,30 T 0,30 z');
 }
 
+.ghost[data-color='1']::before{
+  background-color : red;
+}
+.ghost[data-color='2']::before{
+  background-color : orange;
+}
+.ghost[data-color='3']::before{
+  background-color : lightblue;
+}
+.ghost[data-color='4']::before{
+  background-color : pink;
+}
+.ghost[data-status='weak']::before{
+  background-color : blue;
+}
 
-.ghost > .under{
-  height : var(--size-under);
+.ghost .eye-l,
+.ghost .eye-r{
+  position:absolute;
+  top:8px;
+  width:8px;
+  background-color:white;
+  width:9px;
+  height:9px;
+  border-radius:50%;
 }
-.ghost > .under path{
-  fill:var(--color-body);
+.ghost .eye-l{
+  left:5px;
+}
+.ghost .eye-r{
+  right:5px;
+}
+.ghost .eye-l::before,
+.ghost .eye-r::before{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:50%;
+  height:50%;
+  background-color:black;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+}
+.ghost[data-direction='left'] .eye-l{
+  left:0px;
+}
+.ghost[data-direction='left'] .eye-r{
+  right:10px;
+}
+.ghost[data-direction='right'] .eye-l{
+  left:10px;
+}
+.ghost[data-direction='right'] .eye-r{
+  right:0px;
+}
+.ghost[data-direction='up'] .eye-l,
+.ghost[data-direction='up'] .eye-r{
+  top:2px;
+}
+.ghost[data-direction='down'] .eye-l,
+.ghost[data-direction='down'] .eye-r{
+  top:16px;
+}
+.ghost[data-status='weak'] .eye-l{
+  top:8px;
+  left:8px;
+}
+.ghost[data-status='weak'] .eye-r{
+  top:8px;
+  right:8px;
+}
+.ghost[data-status='weak'] .eye-l,
+.ghost[data-status='weak'] .eye-r{
+  width:6px;
+  height:6px
+}
+.ghost[data-status='weak'] .eye-l::before,
+.ghost[data-status='weak'] .eye-r::before{
+  opacity:0;
+}
+.ghost[data-status='weak'] .mouse{
+  position:absolute;
+  top:16px;
+  left:0;
+  width:100%;
+  height:8px;
+  background-color:#FFF;
+  clip-path : path('M 2,6 Q 4,2 6,4 Q 8,8 10,4 Q 12,2 14,4 Q 16,8 18,4 Q 20,2 22,4 Q 24,8 26,4 Q 28,2 30,6  L 30,7  Q 28,3 26,5 Q 24,9 22,5 Q 20,3 18,5 Q 16,9 14,5 Q 12,3 10,5 Q 8,9 6,5 Q 4,3 2,7');
 }
 
-
-.ghost[data-status='dead']{
-  --color-body : blue;
-}
-
-.ghost[data-status='dead']{
-  --color-body : transparent;
-}
-
-
-/* power-limit-soon */
-[data-power='2'] .ghost[data-status='weak']{
-  animation-name : power_soon_body;
-  animation-duration:0.4s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-[data-power='2'] .ghost[data-status='weak'] > .head .eyes .eye-left,
-[data-power='2'] .ghost[data-status='weak'] > .head .eyes .eye-right{
-  animation-name : power_soon_eyes;
-  animation-duration:0.4s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-[data-power='2'] .ghost[data-status='weak'] > .mouse svg path{
-  animation-name : power_soon_mouse;
-  animation-duration:0.4s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-@keyframes power_soon_body{
-  0%{
-    --color-body:blue;
-  }
-  50%{
-    --color-body:white;
-  }
-  100%{
-    --color-body:blue;
-  }
-}
-@keyframes power_soon_eyes{
-  0%{
-    background-color:white;
-  }
-  50%{
-    background-color:red;
-  }
-  100%{
-    background-color:white;
-  }
-}
-@keyframes power_soon_mouse{
-  0%{
-    stroke:white;
-  }
-  50%{
-    stroke:red;
-  }
-  100%{
-    stroke:white;
-  }
+.ghost[data-status='dead']::before{
+  background-color : transparent;
 }

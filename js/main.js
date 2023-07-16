@@ -3,6 +3,7 @@ import { Frame }   from './frame.js'
 import { Control } from './control.js'
 import { Feed }    from './feed.js'
 import { Footer }  from './footer.js'
+import { Mobile }  from './mobile.js'
 
 export const Main = {
   anim_speed         : 200,
@@ -42,6 +43,7 @@ function init(){
     new Frame()
     new Control()
     new Feed()
+    new Mobile()
   })
 }
 

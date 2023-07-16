@@ -1,0 +1,14 @@
+html{
+  width:100%;
+  padding:0;
+  margin:0;
+}
+body{
+  width:100%;
+  overflow:hidden;
+  padding:0;
+  margin:0;
+}
+.pacman-root{
+  transform-origin:top left;
+}
