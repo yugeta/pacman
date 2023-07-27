@@ -9,3 +9,6 @@
   --size-chara : calc(var(--block) * 2);
   color:white;
 }
+body{
+  background-color:black;
+}
